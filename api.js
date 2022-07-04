@@ -1,6 +1,7 @@
 const Koa = require('koa')
 const Router = require('@koa/router')
 const logger = require('koa-logger')
+const usePriceScraping = require('./scraper')
 
 const app = new Koa()
 const router = new Router()
@@ -15,11 +16,13 @@ router
   .get('/', ctx => {
     ctx.body = 'Hello World'
   })
-  .get('/scrape', ctx => {
+  .get('/scraper', ctx => {
     ctx.body = 'Hello World'
   })
-  .get('/scrape/:scraper', ctx => {
-    ctx.body = 'Hello World'
+  .get('/scraper/:scraper', async ctx => {
+    const { scraper } = ctx.params
+    await usePriceScraping(scraper)
+    ctx.body = 'ok'
   })
   .get('/companies', ctx => {
     ctx.body = 'Hello World'
