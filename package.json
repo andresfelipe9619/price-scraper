@@ -13,8 +13,8 @@
     "@koa/router": "^10.1.1",
     "koa": "^2.13.4",
     "koa-logger": "^3.2.1",
+    "mysql2": "^2.3.3",
     "puppeteer": "^10.4.0",
-    "sequelize": "^6.21.2",
-    "sqlite3": "^5.0.8"
+    "sequelize": "^6.21.2"
   }
 }
