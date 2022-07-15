@@ -5,16 +5,25 @@
   "main": "api.js",
   "scripts": {
     "start": "node api.js",
+    "migrate:init": "prisma migrate dev --name init",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@koa/router": "^10.1.1",
+    "@prisma/client": "^4.0.0",
     "koa": "^2.13.4",
+    "koa-basic-auth": "^4.0.0",
+    "koa-bodyparser": "^4.3.0",
     "koa-logger": "^3.2.1",
+    "koa-mount": "^4.0.0",
+    "koa2-cors": "^2.0.6",
     "mysql2": "^2.3.3",
     "puppeteer": "^10.4.0",
     "sequelize": "^6.21.2"
+  },
+  "devDependencies": {
+    "prisma": "^4.0.0"
   }
 }
