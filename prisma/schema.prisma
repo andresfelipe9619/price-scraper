@@ -1,5 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+// https://www.prisma.io/docs/concepts/components/prisma-migrate
 
 generator client {
   provider = "prisma-client-js"
@@ -10,50 +11,72 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        Int           @id @default(autoincrement())
+  name      String        @db.VarChar(255)
+  email     String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  products  UserProduct[]
+}
+
 model Product {
-  id           Int            @id @default(autoincrement())
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  title        String         @db.VarChar(255)
-  content      String?
-  published    Boolean        @default(false)
-  UserProduct  UserProduct[]
-  StoreProduct StoreProduct[]
+  id          Int            @id @default(autoincrement())
+  name        String         @db.VarChar(255)
+  description String?        @db.Text
+  published   Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  users       UserProduct[]
+  stores      StoreProduct[]
+}
+
+model HistoricalPrice {
+  id        Int          @id @default(autoincrement())
+  price     Decimal
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  product   StoreProduct @relation(fields: [productId], references: [id])
+  productId Int
+}
+
+model Store {
+  id        Int            @id @default(autoincrement())
+  name      String         @db.VarChar(255)
+  url       String         @db.Text
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  products  StoreProduct[]
 }
 
 model Expiry {
   id            Int         @id @default(autoincrement())
-  date          DateTime    @updatedAt
+  date          DateTime
+  quantity      Decimal
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
   userProduct   UserProduct @relation(fields: [userProductId], references: [id])
   userProductId Int
 }
 
 model StoreProduct {
-  id        Int     @id @default(autoincrement())
-  store     Store   @relation(fields: [storeId], references: [id])
-  storeId   Int     @unique
-  product   Product @relation(fields: [productId], references: [id])
-  productId Int     @unique
+  id         Int               @id @default(autoincrement())
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  store      Store             @relation(fields: [storeId], references: [id])
+  storeId    Int
+  product    Product           @relation(fields: [productId], references: [id])
+  productId  Int
+  historical HistoricalPrice[]
 }
 
 model UserProduct {
   id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   user        User     @relation(fields: [userId], references: [id])
   userId      Int
   product     Product  @relation(fields: [productId], references: [id])
   productId   Int
   expirations Expiry[]
-}
-
-model Store {
-  id           Int            @id @default(autoincrement())
-  name         String?
-  StoreProduct StoreProduct[]
-}
-
-model User {
-  id       Int           @id @default(autoincrement())
-  email    String        @unique
-  name     String?
-  products UserProduct[]
 }
