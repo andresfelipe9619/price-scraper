@@ -19,12 +19,13 @@ router
   .get('/scraper', ctx => {
     ctx.body = 'Hello World'
   })
-  .get('/scraper/:scraper', async ctx => {
+  .get('/scrapers/:scraper', async ctx => {
     const { scraper } = ctx.params
+    if (!scraper) throw new Error('No scraper provided')
     await usePriceScraping(scraper)
     ctx.body = 'ok'
   })
-  .get('/companies', ctx => {
+  .get('/sotores', ctx => {
     ctx.body = 'Hello World'
   })
   .get('/products', ctx => {

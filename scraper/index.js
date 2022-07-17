@@ -7,7 +7,7 @@ async function init (scraper) {
     const PageScraper = Scrapers.get(scraper)
     await PageScraper.scraper(browser)
   } catch (error) {
-    console.log('Could not resolve the browser instance => ', error)
+    console.error(error)
   } finally {
     process.exit(1)
   }
