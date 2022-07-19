@@ -6,6 +6,7 @@ async function init (scraper) {
     const browser = await Browser.startBrowser()
     const PageScraper = Scrapers.get(scraper)
     await PageScraper.scraper(browser)
+    await browser.close()
   } catch (error) {
     console.error(error)
   } finally {
