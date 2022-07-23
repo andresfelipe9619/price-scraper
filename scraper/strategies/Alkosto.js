@@ -6,7 +6,8 @@ const {
   getRealPrice,
   getImages,
   getTitle,
-  bypassModal
+  bypassModal,
+  isElementVisible
 } = require('./interface')
 const { chunkArray } = require('../../utils')
 
@@ -16,7 +17,8 @@ const PATH = '/mercado/lacteos-huevos-y-refrigerados'
 const Selectors = {
   Content: '.vtex-product-summary-2-x-container',
   City: '.MuiInput-input.exito-autocomplete-2',
-  Detail: '.exito-product-details-3-x-contentOptions'
+  Detail: '.exito-product-details-3-x-contentOptions',
+  LoadMore: '.vtex-search-result-3-x-buttonShowMore button'
 }
 
 const ProductSelectors = {
@@ -43,6 +45,12 @@ async function scraper (browser) {
 
   console.log(`Page Loaded...`)
 
+  let loadMoreVisible = await isElementVisible(page, Selectors.LoadMore)
+  while (loadMoreVisible) {
+    await page.click(Selectors.LoadMore).catch(() => {})
+    loadMoreVisible = await isElementVisible(page, Selectors.LoadMore)
+  }
+
   let uris = await page.$$eval(Selectors.Content, options =>
     options.map(option => {
       if (option.firstChild) {
@@ -55,9 +63,9 @@ async function scraper (browser) {
   )
   console.log(`uris`, uris)
   // Loop through each of those links, open a new page instance and get the relevant data from them
-  let pagePromise = async link => {
-    let dataObj = {}
-    let newPage = await browser.newPage()
+  const pagePromise = async link => {
+    const dataObj = {}
+    const newPage = await browser.newPage()
     await newPage.goto(link)
     dataObj['link'] = link
 
@@ -94,6 +102,7 @@ async function scraper (browser) {
 
   const chunks = chunkArray(uris, 4)
   console.log('chunks', chunks)
+
   let result = await chunks.reduce(async (acc, chunk) => {
     let accumulated = await acc
     const chunkResult = await Promise.all(
@@ -104,8 +113,9 @@ async function scraper (browser) {
   }, Promise.resolve([]))
   console.log(`result`, result)
   result = result.flatMap(chunk => chunk)
+
   const object2write = { data: result }
-  let data = JSON.stringify(object2write, null, 2)
+  const data = JSON.stringify(object2write, null, 2)
   await fs.promises.writeFile('alkosto-results.json', data)
   console.log(`That's All Folks!!!`)
 }

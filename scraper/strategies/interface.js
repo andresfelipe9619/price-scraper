@@ -72,6 +72,16 @@ async function bypassModal (page, { Selectors }) {
   page.keyboard.press('Enter')
 }
 
+async function isElementVisible (page, selector) {
+  let visible = true
+  await page
+    .waitForSelector(selector, { visible: true, timeout: 4000 })
+    .catch(() => {
+      visible = false
+    })
+  return visible
+}
+
 function calculateDiscount (price, realPrice) {
   const proceed = price < realPrice
   if (!proceed) return 0
@@ -86,5 +96,6 @@ module.exports = {
   getTitle,
   getImages,
   bypassModal,
+  isElementVisible,
   calculateDiscount
 }
