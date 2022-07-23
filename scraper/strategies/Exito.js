@@ -1,6 +1,14 @@
 const fs = require('fs')
-const Scraper = require('./ScraperClass')
-const { normalizePrice, chunkArray } = require('../../utils')
+const {
+  calculateDiscount,
+  getPrice,
+  getDiscount,
+  getRealPrice,
+  getImages,
+  getTitle,
+  bypassModal
+} = require('./interface')
+const { chunkArray } = require('../../utils')
 
 const BASE_URL = 'https://www.exito.com'
 const PATH = '/mercado/lacteos-huevos-y-refrigerados'
@@ -20,89 +28,14 @@ const ProductSelectors = {
   PriceFallback: 'div.exito-vtex-components-4-x-selling-price span'
 }
 
-async function getDiscount (page) {
-  let discount = null
-  try {
-    await page.waitForSelector(Selectors.Discount)
-    discount = await page.$eval(Selectors.Discount, div => div?.textContent)
-  } catch (error) {
-    console.error('Discount Selector NOT FOUND!')
-  } finally {
-    return discount
-  }
-}
-
-async function getRealPrice (page) {
-  let price = 0
-  try {
-    await page.waitForSelector(ProductSelectors.RealPrice)
-    price = await page.$eval(
-      ProductSelectors.RealPrice,
-      div => div?.textContent
-    )
-  } catch (error) {
-    console.error('Product Real Price Selector NOT FOUND!', error)
-  } finally {
-    price = normalizePrice(price)
-    return price
-  }
-}
-
-async function getPrice (page) {
-  let price = 0
-  try {
-    await page.waitForSelector(ProductSelectors.Price)
-    price = await page.$eval(ProductSelectors.Price, div => div?.textContent)
-  } catch (error) {
-    console.error('Product Price Selector NOT FOUND!', error)
-    try {
-      await page.waitForSelector(ProductSelectors.PriceFallback)
-      price = await page.$eval(
-        ProductSelectors.PriceFallback,
-        span => span?.textContent
-      )
-    } catch (fallbackerror) {
-      console.error('Fallback Price Selector FAILED!', error)
-    }
-  } finally {
-    price = normalizePrice(price)
-    return price
-  }
-}
-
-function getImages (page) {
-  return page.$$eval(ProductSelectors.Images, imgs =>
-    (imgs || []).map(img => {
-      let src = img.getAttribute('src')
-      return src
-    })
-  )
-}
-
-async function bypassModal (page) {
-  console.log(`Waiting selector...`)
-  await page.waitForSelector(Selectors.City)
-
-  console.log(`Typing city...`)
-  await page.type(`${Selectors.City} input`, 'Cali')
-  page.keyboard.press('Enter')
-}
-
-function calculateDiscount (price, realPrice) {
-  const proceed = price < realPrice
-  if (!proceed) return 0
-  const discount = 100 - (price * 100) / realPrice
-  return discount
-}
-
 async function scraper (browser) {
   const page = await browser.newPage()
-  const url = this.baseURL + this.path
+  const url = BASE_URL + PATH
 
   console.log(`Navigating to ${url}...`)
   await page.goto(url)
 
-  await this.bypassModal(page)
+  await bypassModal(page, { Selectors })
   console.log(`Waiting Main Page...`)
 
   await page.click('.shippingaddress-confirmar')
@@ -132,9 +65,7 @@ async function scraper (browser) {
     await newPage.waitForSelector(ProductSelectors.Title)
     console.log(`Tab Loaded ...`)
 
-    dataObj['title'] = await newPage.$eval(ProductSelectors.Title, text =>
-      text?.textContent?.trim()
-    )
+    dataObj['title'] = await getTitle()
 
     await newPage.waitForSelector(Selectors.Detail)
 
@@ -144,7 +75,9 @@ async function scraper (browser) {
       realPrice = 0,
       images = []
     ] = await Promise.all(
-      [getPrice, getDiscount, getRealPrice, getImages].map(fn => fn(newPage))
+      [getPrice, getDiscount, getRealPrice, getImages].map(fn =>
+        fn(newPage, { Selectors, ProductSelectors })
+      )
     )
 
     const calculatedDiscount = calculateDiscount(price, realPrice)
@@ -153,8 +86,8 @@ async function scraper (browser) {
     dataObj['date'] = new Date()
     dataObj['discount'] = discount || calculatedDiscount
     dataObj['realPrice'] = realPrice
-
     dataObj['images'] = images
+
     await newPage.close()
     return dataObj
   }
@@ -164,7 +97,7 @@ async function scraper (browser) {
   let result = await chunks.reduce(async (acc, chunk) => {
     let accumulated = await acc
     const chunkResult = await Promise.all(
-      chunk.map(uri => pagePromise(this.baseURL + uri))
+      chunk.map(uri => pagePromise(BASE_URL + uri))
     )
     accumulated.push(chunkResult)
     return accumulated
@@ -177,4 +110,4 @@ async function scraper (browser) {
   console.log(`That's All Folks!!!`)
 }
 
-module.exports = new Scraper(BASE_URL, PATH, scraper, bypassModal)
+module.exports = scraper

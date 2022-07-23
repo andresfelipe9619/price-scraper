@@ -1,15 +1,16 @@
 const Browser = require('./browser')
 const Scrapers = require('./strategies')
 
-async function init (scraper) {
+async function init (strategy) {
+  let browser = null
   try {
-    const browser = await Browser.startBrowser()
-    const PageScraper = Scrapers.get(scraper)
-    await PageScraper.scraper(browser)
-    await browser.close()
+    browser = await Browser.startBrowser()
+    const scraper = Scrapers.get(strategy)
+    await scraper(browser)
   } catch (error) {
     console.error(error)
   } finally {
+    if (browser) await browser.close()
     process.exit(1)
   }
 }
