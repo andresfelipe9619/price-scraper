@@ -1,60 +1,98 @@
 const fs = require('fs')
 const Scraper = require('./ScraperClass')
+const { normalizePrice, chunkArray } = require('../../utils')
 
-const baseURL = 'https://www.exito.com'
-const path = '/mercado/lacteos-huevos-y-refrigerados'
+const BASE_URL = 'https://www.exito.com'
+const PATH = '/mercado/lacteos-huevos-y-refrigerados'
 
-const contentSelector = '.vtex-product-summary-2-x-container'
-const productTitleSelector = 'span.vtex-store-components-3-x-productBrand'
-const productPriceSelector = 'span.exito-vtex-components-4-x-currencyContainer'
-const citySelector = '.MuiInput-input.exito-autocomplete-2'
-const fallback = 'div.exito-vtex-components-4-x-selling-price span'
+const Selectors = {
+  Content: '.vtex-product-summary-2-x-container',
+  City: '.MuiInput-input.exito-autocomplete-2',
+  Detail: '.exito-product-details-3-x-contentOptions'
+}
 
-function normalizePrice (price = '') {
+const ProductSelectors = {
+  Title: 'span.vtex-store-components-3-x-productBrand',
+  Discount: `div.exito-vtex-components-4-x-badgeDiscount`,
+  Images: 'img.exito-product-details-3-x-productImageTag--main',
+  Price: `${Selectors.Detail} div.exito-vtex-components-4-x-valuePLPAllied span`,
+  RealPrice: `${Selectors.Detail} div.vtex-flex-layout-0-x-flexRowContent--summaryPercentage span`,
+  PriceFallback: 'div.exito-vtex-components-4-x-selling-price span'
+}
+
+async function getDiscount (page) {
+  let discount = null
   try {
-    return parseFloat(price.trim().replace(/(\.|\$)/gi, ''))
+    await page.waitForSelector(Selectors.Discount)
+    discount = await page.$eval(Selectors.Discount, div => div?.textContent)
   } catch (error) {
-    console.error(error)
-    return 0
+    console.error('Discount Selector NOT FOUND!')
+  } finally {
+    return discount
   }
 }
 
-// Parte el array en chunks de tamaño 'size'
-function chunkArray (arr, size) {
-  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
-    arr.slice(i * size, i * size + size)
-  )
+async function getRealPrice (page) {
+  let price = 0
+  try {
+    await page.waitForSelector(ProductSelectors.RealPrice)
+    price = await page.$eval(
+      ProductSelectors.RealPrice,
+      div => div?.textContent
+    )
+  } catch (error) {
+    console.error('Product Real Price Selector NOT FOUND!', error)
+  } finally {
+    price = normalizePrice(price)
+    return price
+  }
 }
 
-const defaultPrice = '$0'
-
 async function getPrice (page) {
-  let price = defaultPrice
+  let price = 0
   try {
-    await page.waitForSelector(productPriceSelector)
-    price = await page.$eval(productPriceSelector, div => div?.textContent)
+    await page.waitForSelector(ProductSelectors.Price)
+    price = await page.$eval(ProductSelectors.Price, div => div?.textContent)
   } catch (error) {
     console.error('Product Price Selector NOT FOUND!', error)
     try {
-      await page.waitForSelector(fallback)
-      price = await page.$eval(fallback, span => span?.textContent)
+      await page.waitForSelector(ProductSelectors.PriceFallback)
+      price = await page.$eval(
+        ProductSelectors.PriceFallback,
+        span => span?.textContent
+      )
     } catch (fallbackerror) {
       console.error('Fallback Price Selector FAILED!', error)
-      price = defaultPrice
-    } finally {
-      price = normalizePrice(price || defaultPrice)
-      return price
     }
+  } finally {
+    price = normalizePrice(price)
+    return price
   }
+}
+
+function getImages (page) {
+  return page.$$eval(ProductSelectors.Images, imgs =>
+    (imgs || []).map(img => {
+      let src = img.getAttribute('src')
+      return src
+    })
+  )
 }
 
 async function bypassModal (page) {
   console.log(`Waiting selector...`)
-  await page.waitForSelector(citySelector)
+  await page.waitForSelector(Selectors.City)
 
   console.log(`Typing city...`)
-  await page.type(`${citySelector} input`, 'Cali')
+  await page.type(`${Selectors.City} input`, 'Cali')
   page.keyboard.press('Enter')
+}
+
+function calculateDiscount (price, realPrice) {
+  const proceed = price < realPrice
+  if (!proceed) return 0
+  const discount = 100 - (price * 100) / realPrice
+  return discount
 }
 
 async function scraper (browser) {
@@ -68,11 +106,11 @@ async function scraper (browser) {
   console.log(`Waiting Main Page...`)
 
   await page.click('.shippingaddress-confirmar')
-  await page.waitForSelector(contentSelector)
+  await page.waitForSelector(Selectors.Content)
 
   console.log(`Page Loaded...`)
 
-  let uris = await page.$$eval(contentSelector, options =>
+  let uris = await page.$$eval(Selectors.Content, options =>
     options.map(option => {
       if (option.firstChild) {
         let children = option.firstChild
@@ -91,19 +129,32 @@ async function scraper (browser) {
     dataObj['link'] = link
 
     console.log(`Loading Tab ${link}...`)
-    await newPage.waitForSelector(productTitleSelector)
+    await newPage.waitForSelector(ProductSelectors.Title)
     console.log(`Tab Loaded ...`)
 
-    dataObj['title'] = await newPage.$eval(productTitleSelector, text =>
+    dataObj['title'] = await newPage.$eval(ProductSelectors.Title, text =>
       text?.textContent?.trim()
     )
 
-    dataObj['price'] = await getPrice(newPage)
+    await newPage.waitForSelector(Selectors.Detail)
 
-    // dataObj['imageUrl'] = await newPage.$eval(
-    //   '#product_gallery img',
-    //   img => img.src
-    // )
+    const [
+      price = 0,
+      discount = null,
+      realPrice = 0,
+      images = []
+    ] = await Promise.all(
+      [getPrice, getDiscount, getRealPrice, getImages].map(fn => fn(newPage))
+    )
+
+    const calculatedDiscount = calculateDiscount(price, realPrice)
+
+    dataObj['price'] = price
+    dataObj['date'] = new Date()
+    dataObj['discount'] = discount || calculatedDiscount
+    dataObj['realPrice'] = realPrice
+
+    dataObj['images'] = images
     await newPage.close()
     return dataObj
   }
@@ -126,4 +177,4 @@ async function scraper (browser) {
   console.log(`That's All Folks!!!`)
 }
 
-module.exports = new Scraper(baseURL, path, scraper, bypassModal)
+module.exports = new Scraper(BASE_URL, PATH, scraper, bypassModal)
