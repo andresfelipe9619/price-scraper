@@ -28,12 +28,24 @@ model Product {
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
   users       UserProduct[]
+  images      Image[]
   stores      StoreProduct[]
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  path      String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId Int?
 }
 
 model HistoricalPrice {
   id        Int          @id @default(autoincrement())
-  price     Decimal
+  price     Decimal      @default(0)
+  realPrice Decimal      @default(0)
+  discount  Decimal      @default(0)
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   product   StoreProduct @relation(fields: [productId], references: [id])
