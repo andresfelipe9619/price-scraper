@@ -1,5 +1,6 @@
 const Koa = require('koa')
 const Router = require('@koa/router')
+const API = require('./routes')
 const logger = require('koa-logger')
 const usePriceScraping = require('./scraper')
 
@@ -11,6 +12,7 @@ const PORT = 4000
 app.use(logger())
 app.use(router.routes())
 app.use(router.allowedMethods())
+app.use('/api', API)
 
 router
   .get('/', ctx => {
@@ -24,15 +26,6 @@ router
     if (!scraper) throw new Error('No scraper provided')
     await usePriceScraping(scraper)
     ctx.body = 'ok'
-  })
-  .get('/sotores', ctx => {
-    ctx.body = 'Hello World'
-  })
-  .get('/products', ctx => {
-    ctx.body = 'Hello World'
-  })
-  .get('/products/:id', ctx => {
-    ctx.body = 'Hello World'
   })
   .get('/status', ctx => {
     ctx.status = 200
