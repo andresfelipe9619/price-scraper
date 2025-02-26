@@ -4,6 +4,6 @@ const router = new Router()
 
 // router.use('/login', require('./login'))
 // router.use('/users', require('./user'))
-router.use('/products', require('./product'))
+// router.use('/products', require('./product'))
 
 module.exports = router
