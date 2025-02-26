@@ -1,4 +1,6 @@
 const fs = require('fs');
+const chalk = require('chalk');
+const {saveAsJSON, saveAsCSV} = require("../interfaces/Export");
 const {calculatePriceAndDiscounts} = require("./interface");
 
 const BASE_URL = 'https://www.exito.com';
@@ -7,52 +9,39 @@ const MAX_PAGES = 20;
 
 async function scraper(browser) {
   const page = await browser.newPage();
-  const url = BASE_URL + PATH;
-
-  console.log(`Navigating to: ${url}`);
-  await page.goto(url);
-
-  console.log(`Waiting for main page to load...`);
-  await page.waitForSelector('[class^="productCard_"]');
-  console.log(`Main page loaded!`);
-
-  let allProducts = [];
   let pageIndex = 0;
+  let allProducts = [];
 
-  do {
-    console.log(`Scraping products from page #${pageIndex + 1}...`);
+  while (pageIndex < MAX_PAGES) {
+    const url = `${BASE_URL}${PATH}?category-1=mercado&category-2=lacteos-huevos-y-refrigerados&facets=category-1%2Ccategory-2&sort=score_desc&page=${pageIndex + 1}`;
+
+    console.log(chalk.cyan(`Navigating to: ${url}`));
+    await page.goto(url);
+
+    console.log(chalk.yellow(`Waiting for page #${pageIndex + 1} to load...`));
+    await page.waitForSelector('[class^="productCard_"]');
+    console.log(chalk.green(`Page #${pageIndex + 1} loaded successfully!`));
+
     const products = await getProductsFromPage(page, pageIndex);
+    console.log(chalk.cyan(`Adding ${products.length} products from page #${pageIndex + 1}...`));
 
-    console.log(`Adding ${products.length} products to the list...`);
     allProducts = allProducts.concat(products);
-    if (pageIndex + 1 >= MAX_PAGES) {
-      console.log(`Reached the limit of ${MAX_PAGES} pages. Stopping.`);
-      break;
-    }
 
-    const nextPage = await isNextPageAvailable(page);
-    if (nextPage) {
-      console.log(`Navigating to next page (#${pageIndex + 2})...`);
-      await nextPage.click();
-      await delay(3000)
-    } else {
-      console.log('No more pages to scrape.');
+    if (products.length === 0) {
+      console.log(chalk.red('No more products found. Stopping.'));
       break;
     }
 
     pageIndex++;
-  } while (true);
+  }
 
-  console.log(`Total products scraped: ${allProducts.length}`);
+  console.log(chalk.green(`Total products scraped: ${allProducts.length}`));
 
-  const object2write = {data: allProducts};
-  const data = JSON.stringify(object2write, null, 2);
-  await fs.promises.writeFile('exito-results.json', data);
-  console.log(`Data saved to exito-results.json`);
+  await saveAsJSON('exito-results.json', allProducts);
+  await saveAsCSV('exito-results.csv', allProducts);
 
   await page.close();
 }
-
 
 async function getProductsFromPage(page, index = 0) {
   let products = await page.evaluate(() => {
@@ -73,14 +62,13 @@ async function getProductsFromPage(page, index = 0) {
       const discount = discountElement ? discountElement.innerText.trim() : null;
 
       const linkElement = document.querySelector('a[data-testid="product-link"]');
-      const href = linkElement ? linkElement.getAttribute("href") : null
+      const href = linkElement ? linkElement.getAttribute("href") : null;
 
       return {name, image, price, discount, specialPrice, link: href};
     });
   });
 
   products = products.map(({name, image, price, discount, specialPrice: special, link}) => {
-    // Normalize the base and real prices
     let {
       finalPrice,
       specialPrice,
@@ -101,18 +89,8 @@ async function getProductsFromPage(page, index = 0) {
     };
   });
 
-  console.log(`Found ${products.length} products on page #${index + 1}`);
+  console.log(chalk.green(`Found ${products.length} products on page #${index + 1}`));
   return products;
-}
-
-async function isNextPageAvailable(page) {
-  const nextPageButton = await page.$('[class^="Pagination_nextPreviousLink__"]');
-  console.log(nextPageButton ? 'Next page button found!' : 'Next page button NOT found.');
-  return nextPageButton;
-}
-
-async function delay(time) {
-  return await new Promise(resolve => setTimeout(resolve, time));
 }
 
 module.exports = scraper;

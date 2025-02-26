@@ -1,4 +1,4 @@
-function normalizePrice(price, defaultPrice = 0) {
+function normalizePrice(price, defaultPrice = "$0") {
   try {
     return parseFloat((price || defaultPrice).trim().replace(/[$,\s]/g, '').replace('.', '')) || 0;
   } catch (error) {
