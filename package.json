@@ -17,6 +17,7 @@
     "@koa/router": "^13.1.0",
     "@prisma/client": "^6.4.1",
     "chalk": "^4.1.2",
+    "json2csv": "^6.0.0-alpha.2",
     "koa": "^2.15.4",
     "koa-basic-auth": "^4.0.0",
     "koa-bodyparser": "^4.4.1",
