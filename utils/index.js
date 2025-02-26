@@ -1,7 +1,6 @@
-function normalizePrice(price, defaultPrice = '$0') {
+function normalizePrice(price, defaultPrice = 0) {
   try {
-    const cleanedPrice = price ? price.trim().replace(/([.$,])/gi, '') : defaultPrice.trim().replace(/([.$,])/gi, '');
-    return parseFloat(cleanedPrice) || 0;
+    return parseFloat((price || defaultPrice).trim().replace(/[$,\s]/g, '').replace('.', '')) || 0;
   } catch (error) {
     console.error('Error normalizing price:', error);
     return 0;
@@ -9,27 +8,29 @@ function normalizePrice(price, defaultPrice = '$0') {
 }
 
 function normalizeDiscount(discount) {
-  if (!discount || discount.trim() === '') return { percentage: 0, amount: 0 };
+  if (!discount || discount.trim() === '') return {percentage: 0, amount: 0};
 
-  // Remove unnecessary newlines and spaces
   const cleaned = discount.replace(/\n/g, '').replace(/\s+/g, ' ').trim();
 
-  // Match percentage and amount patterns
   const percentageMatch = cleaned.match(/(\d+)%/);
-  const amountMatch = cleaned.match(/\$\s?(\d+[.,]?\d*)/);
+  const amountMatch = cleaned.match(/\$\s?(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d*)?)/);
 
-  // Extract values
-  const percentage = percentageMatch ? parseInt(percentageMatch[1]) : 0;
-  const amount = amountMatch ? parseFloat(amountMatch[1].replace(',', '.')) : 0;
+  let amount = amountMatch ? amountMatch[1].replace(/[.,]/g, '') : 0;
 
-  return { percentage, amount };
+  return {
+    percentage: percentageMatch ? parseInt(percentageMatch[1]) : 0,
+    amount: parseFloat(amount)
+  };
 }
 
-// Split array into chunks of size 'size'
 function chunkArray(arr, size) {
-  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+  return Array.from({length: Math.ceil(arr.length / size)}, (_, i) =>
       arr.slice(i * size, i * size + size)
   );
 }
 
-module.exports = { normalizePrice, normalizeDiscount, chunkArray };
+// console.log(normalizePrice("$ 11.600"));
+// console.log(normalizeDiscount("-\n\n20\n\n%"));
+// console.log(normalizeDiscount("-\n\n27\n\n%\n\n$ 15.500"));
+
+module.exports = {normalizePrice, normalizeDiscount, chunkArray};

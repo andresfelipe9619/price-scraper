@@ -1,9 +1,9 @@
 const fs = require('fs');
-const {chunkArray, normalizeDiscount, normalizePrice} = require('../../utils');
+const {calculatePriceAndDiscounts} = require("./interface");
 
 const BASE_URL = 'https://www.exito.com';
 const PATH = '/mercado/lacteos-huevos-y-refrigerados';
-const MAX_PAGES = 4;
+const MAX_PAGES = 20;
 
 async function scraper(browser) {
   const page = await browser.newPage();
@@ -34,7 +34,7 @@ async function scraper(browser) {
     if (nextPage) {
       console.log(`Navigating to next page (#${pageIndex + 2})...`);
       await nextPage.click();
-      await page.waitForNavigation({waitUntil: 'domcontentloaded'});
+      await delay(3000)
     } else {
       console.log('No more pages to scrape.');
       break;
@@ -53,6 +53,7 @@ async function scraper(browser) {
   await page.close();
 }
 
+
 async function getProductsFromPage(page, index = 0) {
   let products = await page.evaluate(() => {
     return Array.from(document.querySelectorAll('article[class^="productCard_"]')).map(product => {
@@ -65,35 +66,40 @@ async function getProductsFromPage(page, index = 0) {
       const priceElement = product.querySelector('[data-fs-container-price-otros]');
       const price = priceElement ? priceElement.innerText.trim() : null;
 
+      const specialPriceElement = product.querySelector('[data-fs-price]');
+      const specialPrice = specialPriceElement ? specialPriceElement.innerText.trim() : null;
+
       const discountElement = product.querySelector('[class^="priceSection_container-promotion"]');
       const discount = discountElement ? discountElement.innerText.trim() : null;
 
-      return {name, image, price, discount};
+      const linkElement = document.querySelector('a[data-testid="product-link"]');
+      const href = linkElement ? linkElement.getAttribute("href") : null
+
+      return {name, image, price, discount, specialPrice, link: href};
     });
   });
 
-  // products = products.map(({name, image, price, discountText}) => {
-  //   // Normalize the base and real prices
-  //   const finalPrice = normalizePrice(price);
-  //   const {percentage, amount} = normalizeDiscount(discountText);
-  //
-  //   // Calculate real price from discount amount or percentage
-  //   let realPrice = amount || (percentage ? finalPrice / (1 - percentage / 100) : finalPrice);
-  //
-  //   // Handle edge cases where realPrice might be invalid
-  //   realPrice = realPrice && realPrice > 0 ? realPrice : finalPrice;
-  //
-  //   // Calculate discount percentage, if not directly provided
-  //   const discountPercentage = percentage || ((realPrice - finalPrice) / realPrice * 100).toFixed(2);
-  //
-  //   return {
-  //     name,
-  //     image,
-  //     price: finalPrice,
-  //     realPrice,
-  //     discount: discountPercentage ? `${discountPercentage}%` : null
-  //   };
-  // });
+  products = products.map(({name, image, price, discount, specialPrice: special, link}) => {
+    // Normalize the base and real prices
+    let {
+      finalPrice,
+      specialPrice,
+      realPrice,
+      discountPercentage,
+      specialDiscountPercentage
+    } = calculatePriceAndDiscounts(price, special, discount);
+
+    return {
+      name,
+      image,
+      link: BASE_URL + link,
+      specialPrice,
+      price: finalPrice,
+      realPrice,
+      specialDiscount: specialDiscountPercentage ? `${specialDiscountPercentage}%` : null,
+      discount: discountPercentage ? `${discountPercentage}%` : null
+    };
+  });
 
   console.log(`Found ${products.length} products on page #${index + 1}`);
   return products;
@@ -103,6 +109,10 @@ async function isNextPageAvailable(page) {
   const nextPageButton = await page.$('[class^="Pagination_nextPreviousLink__"]');
   console.log(nextPageButton ? 'Next page button found!' : 'Next page button NOT found.');
   return nextPageButton;
+}
+
+async function delay(time) {
+  return await new Promise(resolve => setTimeout(resolve, time));
 }
 
 module.exports = scraper;

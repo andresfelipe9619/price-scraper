@@ -1,4 +1,4 @@
-const {normalizePrice} = require('../../utils')
+const {normalizePrice, normalizeDiscount} = require('../../utils')
 
 async function getDiscount(page, {Selectors}) {
   let discount = null
@@ -92,6 +92,24 @@ function calculateDiscount(price, realPrice) {
   return discount
 }
 
+function calculatePriceAndDiscounts(price, special, discount) {
+  const finalPrice = normalizePrice(price);
+  const specialPrice = normalizePrice(special);
+  const {percentage, amount} = normalizeDiscount(discount);
+  console.log({finalPrice, percentage, amount})
+  // Calculate real price from discount amount or percentage
+  let realPrice = amount || (percentage ? finalPrice / (1 - percentage / 100) : finalPrice);
+
+  // Handle edge cases where realPrice might be invalid
+  realPrice = realPrice && realPrice > 0 ? realPrice : finalPrice;
+
+  // Calculate discount percentage, if not directly provided, also check for special price, if present the discount is for it and not for others
+  const discountPercentage = !special && percentage ? percentage : ((realPrice - finalPrice) / realPrice * 100).toFixed(2);
+  const specialDiscountPercentage = special ? ((realPrice - specialPrice) / realPrice * 100).toFixed(2) : 0;
+  return {finalPrice, specialPrice, realPrice, discountPercentage, specialDiscountPercentage};
+}
+
+
 module.exports = {
   getDiscount,
   getRealPrice,
@@ -100,5 +118,6 @@ module.exports = {
   getImages,
   bypassModal,
   isElementVisible,
-  calculateDiscount
+  calculateDiscount,
+  calculatePriceAndDiscounts
 }
