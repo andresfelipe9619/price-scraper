@@ -31,7 +31,7 @@ async function scraper(browser) {
     let allProducts = [];
 
     while (pageIndex < MAX_PAGES) {
-      const url = `${BASE_URL}${categoryPath}&page=${pageIndex}`;
+      const url = `${BASE_URL}${pageIndex === 0 ? categoryPath.split("?")[0] : `${categoryPath}&page=${pageIndex}`}`;
 
       console.log(chalk.blue.bold('\n[INFO] Navigating to page:'), chalk.cyan(url));
       await page.goto(url);

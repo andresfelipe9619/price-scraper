@@ -1,123 +1,149 @@
-const fs = require('fs')
-const {
-  calculateDiscount,
-  getPrice,
-  getDiscount,
-  getRealPrice,
-  getImages,
-  getTitle,
-  bypassModal,
-  isElementVisible
-} = require('./interface')
-const { chunkArray } = require('../../utils')
+const chalk = require('chalk');
+const {saveAsJSON, saveAsCSV} = require("../interfaces/Export");
+const {calculatePriceAndDiscounts} = require("../interfaces/Price");
+const {mkdirSync, existsSync} = require("node:fs");
+const {join} = require("node:path");
 
-const BASE_URL = 'https://www.exito.com'
-const PATH = '/mercado/lacteos-huevos-y-refrigerados'
+const BASE_URL = 'https://www.alkosto.com';
+const CATEGORIES = {
+  // "celulares": '/coleccion/10996?productClusterIds=10996&facets=productClusterIds&sort=score_desc',
+  "computadores-apple": '/computadores-tablet/c/BI_COMP_ALKOS?sort=relevance',
+  // "lacteos-huevos-y-refrigerados": '/mercado/lacteos-huevos-y-refrigerados?category-1=mercado&category-2=lacteos-huevos-y-refrigerados&facets=category-1%2Ccategory-2&sort=score_des',
+};
+const MAX_PAGES = 20;
 
-const Selectors = {
-  Content: '.vtex-product-summary-2-x-container',
-  City: '.MuiInput-input.exito-autocomplete-2',
-  Detail: '.exito-product-details-3-x-contentOptions',
-  LoadMore: '.vtex-search-result-3-x-buttonShowMore button'
-}
+/**
+ * Scrapes product data from the website, navigating through pages and collecting products.
+ * @param {Object} browser - The Puppeteer browser instance.
+ */
+async function scraper(browser) {
+  for (const [categoryName, categoryPath] of Object.entries(CATEGORIES)) {
+    const categoryDir = join(__dirname, "alkosto", categoryName);
 
-const ProductSelectors = {
-  Title: 'span.vtex-store-components-3-x-productBrand',
-  Discount: `div.exito-vtex-components-4-x-badgeDiscount`,
-  Images: 'img.exito-product-details-3-x-productImageTag--main',
-  Price: `${Selectors.Detail} div.exito-vtex-components-4-x-valuePLPAllied span`,
-  RealPrice: `${Selectors.Detail} div.vtex-flex-layout-0-x-flexRowContent--summaryPercentage span`,
-  PriceFallback: 'div.exito-vtex-components-4-x-selling-price span'
-}
+    if (!existsSync(categoryDir)) {
+      mkdirSync(categoryDir, {recursive: true});
+    }
 
-async function scraper (browser) {
-  const page = await browser.newPage()
-  const url = BASE_URL + PATH
+    console.log(chalk.blue.bold(`\n[INFO] Scraping category: ${categoryName}`));
 
-  console.log(`Navigating to ${url}...`)
-  await page.goto(url)
+    const page = await browser.newPage();
+    let pageIndex = 0;
+    let allProducts = [];
 
-  await bypassModal(page, { Selectors })
-  console.log(`Waiting Main Page...`)
+    while (pageIndex < MAX_PAGES) {
+      const url = `${BASE_URL}${pageIndex === 0 ? categoryPath.split("?")[0] : `${categoryPath}&page=${pageIndex + 1}`}`;
 
-  await page.click('.shippingaddress-confirmar')
-  await page.waitForSelector(Selectors.Content)
+      console.log(chalk.blue.bold('\n[INFO] Navigating to page:'), chalk.cyan(url));
+      await page.goto(url);
 
-  console.log(`Page Loaded...`)
+      console.log(chalk.yellow(`Waiting for page #${pageIndex} to load...`));
+      await page.waitForSelector('.product__item__information');
+      console.log(chalk.green(`Page #${pageIndex} loaded successfully!`));
 
-  let loadMoreVisible = await isElementVisible(page, Selectors.LoadMore)
-  while (loadMoreVisible) {
-    await page.click(Selectors.LoadMore).catch(() => {})
-    loadMoreVisible = await isElementVisible(page, Selectors.LoadMore)
-  }
+      const products = await getProductsFromPage(page, pageIndex);
+      console.log(chalk.cyan(`Adding ${products.length} products from page #${pageIndex}...`));
 
-  let uris = await page.$$eval(Selectors.Content, options =>
-    options.map(option => {
-      if (option.firstChild) {
-        let children = option.firstChild
-        let link = children.getAttribute('href')
-        return link
+      allProducts = allProducts.concat(products);
+      if (products.length === 0) {
+        console.log(chalk.red.bold('[STOP] No more products found. Stopping scraper.'));
+        break;
       }
-      return null
-    })
-  )
-  console.log(`uris`, uris)
-  // Loop through each of those links, open a new page instance and get the relevant data from them
-  const pagePromise = async link => {
-    const dataObj = {}
-    const newPage = await browser.newPage()
-    await newPage.goto(link)
-    dataObj['link'] = link
 
-    console.log(`Loading Tab ${link}...`)
-    await newPage.waitForSelector(ProductSelectors.Title)
-    console.log(`Tab Loaded ...`)
+      let nextPage = false;
 
-    dataObj['title'] = await getTitle()
+      try {
+        nextPage = await page.evaluate(() => {
+          const button = document.querySelector('button');
+          return button && button.innerText.trim().toLowerCase() === 'mostrar más productos';
+        });
 
-    await newPage.waitForSelector(Selectors.Detail)
+        if (nextPage) {
+          console.log(chalk.green('[INFO] Found "Mostrar más productos" button. Loading more products...'));
+        } else {
+          console.log(chalk.red.bold('[STOP] No more products found. Stopping scraper.'));
+          break;
+        }
+      } catch (e) {
+        console.error(chalk.red.bold('[ERROR] Failed to check for "Mostrar más productos":'), e);
+        break;
+      }
+      pageIndex++;
+    }
 
-    const [
-      price = 0,
-      discount = null,
-      realPrice = 0,
-      images = []
-    ] = await Promise.all(
-      [getPrice, getDiscount, getRealPrice, getImages].map(fn =>
-        fn(newPage, { Selectors, ProductSelectors })
-      )
-    )
+    console.log(chalk.green.bold(`\n[SUCCESS] Total products scraped for ${categoryName}: ${allProducts.length}`));
 
-    const calculatedDiscount = calculateDiscount(price, realPrice)
+    const jsonPath = join(categoryDir, `${categoryName}-results.json`);
+    const csvPath = join(categoryDir, `${categoryName}-results.csv`);
 
-    dataObj['price'] = price
-    dataObj['date'] = new Date()
-    dataObj['discount'] = discount || calculatedDiscount
-    dataObj['realPrice'] = realPrice
-    dataObj['images'] = images
+    await saveAsJSON(jsonPath, allProducts);
+    console.log(chalk.blue(`[INFO] Saved results as JSON: ${jsonPath}`));
+    await saveAsCSV(csvPath, allProducts);
+    console.log(chalk.blue(`[INFO] Saved results as CSV: ${csvPath}`));
 
-    await newPage.close()
-    return dataObj
+    await page.close();
   }
-
-  const chunks = chunkArray(uris, 4)
-  console.log('chunks', chunks)
-
-  let result = await chunks.reduce(async (acc, chunk) => {
-    let accumulated = await acc
-    const chunkResult = await Promise.all(
-      chunk.map(uri => pagePromise(BASE_URL + uri))
-    )
-    accumulated.push(chunkResult)
-    return accumulated
-  }, Promise.resolve([]))
-  console.log(`result`, result)
-  result = result.flatMap(chunk => chunk)
-
-  const object2write = { data: result }
-  const data = JSON.stringify(object2write, null, 2)
-  await fs.promises.writeFile('alkosto-results.json', data)
-  console.log(`That's All Folks!!!`)
 }
 
-module.exports = scraper
+/**
+ * Extracts product data from the current page.
+ * @param {Object} page - The Puppeteer page instance.
+ * @param {number} index - The current page index.
+ * @returns {Promise<Array>} Promise resolving to a list of scraped products with pricing and discounts calculated.
+ */
+async function getProductsFromPage(page, index = 0) {
+  let products = await page.evaluate(() => {
+    return Array.from(document.querySelectorAll('.product__item__information')).map(product => {
+      const nameElement = product.querySelector('.product__item__top__title');
+      const name = nameElement ? nameElement.innerText.trim() : null;
+
+      const imageElement = product.querySelector('.product__item__information__image');
+      const image = imageElement ? imageElement.src : null;
+
+      const priceElement = product.querySelector('.price');
+      const price = priceElement ? priceElement.innerText.trim() : null;
+
+      const specialPriceElement = product.querySelector('.price-contentPlp');
+      const specialPrice = specialPriceElement ? specialPriceElement.innerText.trim() : null;
+
+      const discountElement = product.querySelector('.label-offer');
+      const discount = discountElement ? discountElement.innerText.trim() : null;
+
+      const linkElement = product.querySelector('.product__item__top__link');
+      const href = linkElement ? linkElement.getAttribute("href") : null;
+
+      return {name, image, price, discount, specialPrice, link: href};
+    });
+  });
+
+  products = products.map(({name, image, price, discount, specialPrice: special, link}) => {
+    let {
+      finalPrice,
+      specialPrice,
+      realPrice,
+      discountPercentage,
+      specialDiscountPercentage
+    } = calculatePriceAndDiscounts(price, special, discount);
+
+    console.log(chalk.magenta('\n[PRODUCT] Processed product:'), chalk.yellow(name || 'Unknown'));
+    console.log(chalk.cyan(`  - Final Price: ${chalk.yellow(finalPrice)}`));
+    console.log(chalk.cyan(`  - Real Price: ${chalk.yellow(realPrice)}`));
+    console.log(chalk.cyan(`  - Discount: ${chalk.yellow(discountPercentage || '0')}%`));
+    if (special) console.log(chalk.cyan(`  - Special Discount: ${chalk.yellow(specialDiscountPercentage || '0')}%`));
+
+    return {
+      name,
+      image,
+      link: BASE_URL + link,
+      specialPrice,
+      price: finalPrice,
+      realPrice,
+      specialDiscount: specialDiscountPercentage ? `${specialDiscountPercentage}%` : null,
+      discount: discountPercentage ? `${discountPercentage}%` : null
+    };
+  });
+
+  console.log(chalk.green.bold(`\n[INFO] Found ${products.length} products on page #${index + 1}`));
+  return products;
+}
+
+module.exports = scraper;
