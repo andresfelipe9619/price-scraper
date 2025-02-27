@@ -1,6 +1,6 @@
 function normalizePrice(price, defaultPrice = "$0") {
   try {
-    return parseFloat((price || defaultPrice).trim().replace(/[$,\s]/g, '').replace('.', '')) || 0;
+    return parseFloat((price || defaultPrice).trim().replace(/[$,\s]/g, '').replace(/\./g, '')) || 0;
   } catch (error) {
     console.error('Error normalizing price:', error);
     return 0;
@@ -30,6 +30,7 @@ function chunkArray(arr, size) {
 }
 
 // console.log(normalizePrice("$ 11.600"));
+// console.log(normalizePrice("$ 8.190.000"));
 // console.log(normalizeDiscount("-\n\n20\n\n%"));
 // console.log(normalizeDiscount("-\n\n27\n\n%\n\n$ 15.500"));
 
