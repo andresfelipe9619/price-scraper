@@ -1,9 +1,15 @@
 const chalk = require('chalk');
-const { saveAsJSON, saveAsCSV } = require("../interfaces/Export");
-const { calculatePriceAndDiscounts } = require("../interfaces/Price");
+const {saveAsJSON, saveAsCSV} = require("../interfaces/Export");
+const {calculatePriceAndDiscounts} = require("../interfaces/Price");
+const {mkdirSync, existsSync} = require("node:fs");
+const {join} = require("node:path");
 
 const BASE_URL = 'https://www.exito.com';
-const PATH = '/mercado/lacteos-huevos-y-refrigerados';
+const CATEGORIES = {
+  "celulares": '/coleccion/10996?productClusterIds=10996&facets=productClusterIds&sort=score_desc',
+  "computadores-apple": '/tecnologia/computadores?category-2=computadores&brand=apple&category-1=tecnologia&facets=category-2%2Cbrand%2Ccategory-1&sort=score_desc',
+  "lacteos-huevos-y-refrigerados": '/mercado/lacteos-huevos-y-refrigerados?category-1=mercado&category-2=lacteos-huevos-y-refrigerados&facets=category-1%2Ccategory-2&sort=score_des',
+};
 const MAX_PAGES = 20;
 
 /**
@@ -11,41 +17,61 @@ const MAX_PAGES = 20;
  * @param {Object} browser - The Puppeteer browser instance.
  */
 async function scraper(browser) {
-  const page = await browser.newPage();
-  let pageIndex = 0;
-  let allProducts = [];
+  for (const [categoryName, categoryPath] of Object.entries(CATEGORIES)) {
+    const categoryDir = join(__dirname, "exito", categoryName);
 
-  while (pageIndex < MAX_PAGES) {
-    const url = `${BASE_URL}${PATH}?category-1=mercado&category-2=lacteos-huevos-y-refrigerados&facets=category-1%2Ccategory-2&sort=score_desc&page=${pageIndex + 1}`;
-
-    console.log(chalk.blue.bold('\n[INFO] Navigating to page:'), chalk.cyan(url));
-    await page.goto(url);
-
-    console.log(chalk.yellow(`Waiting for page #${pageIndex + 1} to load...`));
-    await page.waitForSelector('[class^="productCard_"]');
-    console.log(chalk.green(`Page #${pageIndex + 1} loaded successfully!`));
-
-    const products = await getProductsFromPage(page, pageIndex);
-    console.log(chalk.cyan(`Adding ${products.length} products from page #${pageIndex + 1}...`));
-
-    allProducts = allProducts.concat(products);
-
-    if (products.length === 0) {
-      console.log(chalk.red.bold('[STOP] No more products found. Stopping scraper.'));
-      break;
+    if (!existsSync(categoryDir)) {
+      mkdirSync(categoryDir, {recursive: true});
     }
 
-    pageIndex++;
+    console.log(chalk.blue.bold(`\n[INFO] Scraping category: ${categoryName}`));
+
+    const page = await browser.newPage();
+    let pageIndex = 0;
+    let allProducts = [];
+
+    while (pageIndex < MAX_PAGES) {
+      const url = `${BASE_URL}${categoryPath}&page=${pageIndex}`;
+
+      console.log(chalk.blue.bold('\n[INFO] Navigating to page:'), chalk.cyan(url));
+      await page.goto(url);
+      const nextPageElement = await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('[class^="Pagination_nextPreviousLink_"]'));
+        return buttons.some(btn => btn.innerText.trim().toLowerCase() === 'siguiente');
+      });
+
+      if (!nextPageElement) {
+        console.log(chalk.red.bold('[STOP] No more products found. Stopping scraper.'));
+        break;
+      }
+      console.log(chalk.yellow(`Waiting for page #${pageIndex} to load...`));
+      await page.waitForSelector('[class^="productCard_"]');
+      console.log(chalk.green(`Page #${pageIndex} loaded successfully!`));
+
+      const products = await getProductsFromPage(page, pageIndex);
+      console.log(chalk.cyan(`Adding ${products.length} products from page #${pageIndex}...`));
+
+      allProducts = allProducts.concat(products);
+      if (products.length === 0) {
+        console.log(chalk.red.bold('[STOP] No more products found. Stopping scraper.'));
+        break;
+      }
+
+      pageIndex++;
+    }
+
+    console.log(chalk.green.bold(`\n[SUCCESS] Total products scraped for ${categoryName}: ${allProducts.length}`));
+
+    const jsonPath = join(categoryDir, `${categoryName}-results.json`);
+    const csvPath = join(categoryDir, `${categoryName}-results.csv`);
+
+    await saveAsJSON(jsonPath, allProducts);
+    console.log(chalk.blue(`[INFO] Saved results as JSON: ${jsonPath}`));
+    await saveAsCSV(csvPath, allProducts);
+    console.log(chalk.blue(`[INFO] Saved results as CSV: ${csvPath}`));
+
+    await page.close();
   }
-
-  console.log(chalk.green.bold(`\n[SUCCESS] Total products scraped: ${allProducts.length}`));
-
-  await saveAsJSON('exito-results.json', allProducts);
-  console.log(chalk.blue('[INFO] Saved results as JSON.'));
-  await saveAsCSV('exito-results.csv', allProducts);
-  console.log(chalk.blue('[INFO] Saved results as CSV.'));
-
-  await page.close();
 }
 
 /**
@@ -75,11 +101,11 @@ async function getProductsFromPage(page, index = 0) {
       const linkElement = product.querySelector('a[data-testid="product-link"]');
       const href = linkElement ? linkElement.getAttribute("href") : null;
 
-      return { name, image, price, discount, specialPrice, link: href };
+      return {name, image, price, discount, specialPrice, link: href};
     });
   });
 
-  products = products.map(({ name, image, price, discount, specialPrice: special, link }) => {
+  products = products.map(({name, image, price, discount, specialPrice: special, link}) => {
     let {
       finalPrice,
       specialPrice,
