@@ -6,7 +6,7 @@ class ExitoScraper extends BaseScraper {
     const config = {
       maxPages: 20,
       baseUrl: "https://www.exito.com",
-      outputDir: join(__dirname, "/extracted-data/exito"),
+      outputDir: join(__dirname, "../../extracted-data/exito"),
       categories: {
         // celulares: "/coleccion/10996?productClusterIds=10996&facets=productClusterIds&sort=score_desc",
         "computadores-apple": "/tecnologia/computadores?category-2=computadores&brand=apple&category-1=tecnologia&facets=category-2%2Cbrand%2Ccategory-1&sort=score_desc",
