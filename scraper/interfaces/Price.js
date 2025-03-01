@@ -15,9 +15,9 @@ const {normalizePrice, normalizeDiscount} = require('../../utils');
  * - **Special Discount Percentage:**
  *   - `specialDiscountPercentage = ((realPrice - specialPrice) / realPrice) * 100`
  *
- * @param {number} price - The base price of the item.
- * @param {number} special - The special promotional price (optional).
- * @param {number} discount - The discount as a percentage or fixed amount.
+ * @param {string} price - The base price of the item.
+ * @param {string} special - The special promotional price (optional).
+ * @param {string} discount - The discount as a percentage or fixed amount.
  * @returns {Object} An object containing the final, special, and real prices, along with discount percentages.
  */
 function calculatePriceAndDiscounts(price, special, discount) {
