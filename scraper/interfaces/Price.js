@@ -6,7 +6,7 @@ const {normalizePrice, normalizeDiscount} = require('../../utils')
  *
  * @param {number} price - The base price of the item.
  * @param {number} special - The special promotional price (optional).
- * @param {number | { percentage: number, amount: number }} discount - The discount, either as a percentage or amount.
+ * @param {number} discount - The discount as a percentage.
  * @returns {Object} An object containing the final, special, and real prices, along with discount percentages.
  */
 function calculatePriceAndDiscounts(price, special, discount) {

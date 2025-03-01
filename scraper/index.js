@@ -15,7 +15,7 @@ async function init(strategy) {
     console.error(chalk.red('An error occurred during scraping:'))
     console.error(chalk.red(error))
   } finally {
-    // if (browser) await browser.close()
+    if (browser) await browser.close()
     console.log(chalk.yellow('Browser closed. Exiting process.'))
     // process.exit(1)
   }
