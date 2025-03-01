@@ -9,7 +9,31 @@ const {join} = require("node:path");
 const {calculatePriceAndDiscounts} = require("./Price");
 const {sleep, formatPercentage} = require("../../utils");
 
+/**
+ * Configuration object for the web scraper.
+ *
+ * @typedef {Object} ScraperConfig
+ * @property {number} maxPages - The maximum number of pages to scrape.
+ * @property {string} baseUrl - The base URL of the site to scrape.
+ * @property {string} outputDir - The directory path to save the extracted data.
+ * @property {Object.<string, string>} categories - A map of category names to their respective URL paths.
+ * @property {string} nextPageText - The text or ARIA label of the "next page" button.
+ * @property {Object} selectors - CSS selectors for extracting product data.
+ * @property {string} selectors.productCard - Selector for the product card container.
+ * @property {string} selectors.title - Selector for the product title.
+ * @property {string} selectors.price - Selector for the product price.
+ * @property {string} selectors.specialPrice - Selector for the special/discounted price.
+ * @property {string} selectors.discount - Selector for the discount badge.
+ * @property {string} selectors.image - Selector for the product image.
+ * @property {string} selectors.link - Selector for the product link.
+ */
+
 class BaseScraper {
+  /**
+   * @constructor
+   * @param {import('puppeteer').Browser} browser - The Puppeteer browser instance.
+   * @param {ScraperConfig} config - The configuration object for the scraper.
+   */
   constructor(browser, config) {
     this.config = config;
     this.browser = browser;
@@ -67,37 +91,38 @@ class BaseScraper {
     }
   }
 
-    /**
-     * Checks if there is a next page in pagination.
-     * @param {Object} page - The Puppeteer page instance.
-     * @returns {Promise<boolean>} True if next page exists, false otherwise.
-     */
-    async hasNextPage(page) {
-      let nextPage = false;
-      try {
-        nextPage = await page.evaluate((nextPageText) => {
-          const buttons = document.querySelectorAll('button');
-          return Array.from(buttons).some(button =>
-              button.innerText.trim().toLowerCase() === nextPageText
-          );
-        }, this.config.nextPageText);
+  /**
+   * Checks if there is a next page in pagination.
+   * @param {import('puppeteer').Page} page - The Puppeteer page instance.
+   * @returns {Promise<boolean>} True if next page exists, false otherwise.
+   */
+  async hasNextPage(page) {
+    let nextPage = false;
+    try {
+      nextPage = await page.evaluate((nextPageText, nextPageSelector) => {
+        const buttons = document.querySelectorAll(nextPageSelector || 'button');
+        return Array.from(buttons).some(button =>
+            button.innerText.trim().toLowerCase() === nextPageText ||
+            button.getAttribute('aria-label')?.trim().toLowerCase() === nextPageText
+        );
+      }, this.config.nextPageText, this.config.selectors.nextPage);
 
-        if (nextPage) {
-          console.log(chalk.green(`[INFO] Found "${this.config.nextPageText}" button. Loading more products...`));
-        } else {
-          console.log(chalk.red.bold(`[STOP] NOT Found "${this.config.nextPageText}" button. Stopping scraper.`));
-        }
-
-        return !!nextPage;
-      } catch (e) {
-        console.error(chalk.red.bold(`[ERROR] Failed to check for "${this.config.nextPageText}":`), e);
-        return false;
+      if (nextPage) {
+        console.log(chalk.green(`[INFO] Found "${this.config.nextPageText}" button (by text or aria-label). Loading more products...`));
+      } else {
+        console.log(chalk.red.bold(`[STOP] NOT Found "${this.config.nextPageText}" button (by text or aria-label). Stopping scraper.`));
       }
+
+      return !!nextPage;
+    } catch (e) {
+      console.error(chalk.red.bold(`[ERROR] Failed to check for "${this.config.nextPageText}":`), e);
+      return false;
     }
+  }
 
   /**
    * Extracts product data from the current page.
-   * @param {Object} page - The Puppeteer page instance.
+   * @param {import('puppeteer').Page} page - The Puppeteer page instance.
    * @returns {Promise<Array>} List of scraped products.
    */
   async extractProducts(page) {
@@ -170,6 +195,14 @@ class BaseScraper {
     console.log(chalk.blue(`[INFO] Saved results as CSV: ${csvPath}`));
   }
 
+  /**
+   * Intercepts and handles network requests for the given Puppeteer page.
+   * Blocks requests to Google Tag Manager to avoid unnecessary loading.
+   *
+   * @async
+   * @param {import('puppeteer').Page} page - The Puppeteer page instance to intercept requests on.
+   * @returns {Promise<void>} - A promise that resolves once the interception is set up.
+   */
   async interceptRequests(page) {
     await page.setRequestInterception(true);
 
