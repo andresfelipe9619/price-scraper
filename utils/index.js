@@ -29,9 +29,17 @@ function chunkArray(arr, size) {
   );
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function formatPercentage(value) {
+  return value ? `${value}%` : null;
+}
+
 // console.log(normalizePrice("$ 11.600"));
 // console.log(normalizePrice("$ 8.190.000"));
 // console.log(normalizeDiscount("-\n\n20\n\n%"));
 // console.log(normalizeDiscount("-\n\n27\n\n%\n\n$ 15.500"));
 
-module.exports = {normalizePrice, normalizeDiscount, chunkArray};
+module.exports = {normalizePrice, normalizeDiscount, sleep, chunkArray, formatPercentage};

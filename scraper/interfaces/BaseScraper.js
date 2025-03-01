@@ -7,6 +7,7 @@ const {saveAsJSON, saveAsCSV} = require("./Export");
 const {mkdirSync, existsSync} = require("node:fs");
 const {join} = require("node:path");
 const {calculatePriceAndDiscounts} = require("./Price");
+const {sleep, formatPercentage} = require("../../utils");
 
 class BaseScraper {
   constructor(browser, config) {
@@ -24,40 +25,37 @@ class BaseScraper {
 
       console.log(chalk.blue.bold(`\n[INFO] Scraping category: ${categoryName}`));
       const page = await this.browser.newPage();
-      // await page.setRequestInterception(true)
-      //
-      // page.on('request', (req) => {
-      //   const url = req.url()
-      //
-      //   if (url.includes('www.googletagmanager.com')) {
-      //     console.log(`Blocking request to: ${url}`)
-      //     req.abort()
-      //   } else {
-      //     req.continue()
-      //   }
-      // })
+      await page.exposeFunction("productNormalizer", this.normalizeProducts);
 
       let pageIndex = 0;
       let allProducts = [];
 
       while (pageIndex < this.config.maxPages) {
-        const url = `${this.config.baseUrl}${pageIndex === 0 ? categoryPath.split("?")[0] : `${categoryPath}&page=${pageIndex}`}`;
+        const url = `${this.config.baseUrl}${pageIndex === 0 ? categoryPath : `${categoryPath}&page=${pageIndex}`}`;
         console.log(chalk.blue.bold('\n[INFO] Navigating to page:'), chalk.cyan(url));
-
         await page.goto(url);
 
         console.log(chalk.yellow(`Waiting for page #${pageIndex} to load...`));
-        await page.waitForSelector(this.config.selectors.productCard);
-        console.log(chalk.green(`Page #${pageIndex} loaded successfully!`));
+        await sleep(2000);
+
+        try {
+          await page.waitForSelector(this.config.selectors.productCard, {timeout: 5000});
+          console.log(chalk.green(`Page #${pageIndex} loaded successfully!`));
+        } catch (error) {
+          console.log(chalk.red.bold(`[ERROR] Failed to load products on page #${pageIndex}: ${error.message}`));
+          console.log(chalk.yellow.bold(`[INFO] Saving the collected products so far for category: ${categoryName}`));
+          break; // Exit the loop but continue to save results
+        }
 
         const products = await this.extractProducts(page);
         console.log(chalk.cyan(`Adding ${products.length} products from page #${pageIndex}...`));
 
-        if (products.length === 0) {
+        if (!products?.length) {
           console.log(chalk.red.bold('[STOP] No more products found. Stopping scraper.'));
           break;
         }
         allProducts = allProducts.concat(products);
+
         const hasNextPage = await this.hasNextPage(page);
         if (!hasNextPage) break;
         pageIndex++;
@@ -69,17 +67,33 @@ class BaseScraper {
     }
   }
 
-  /**
-   * Checks if there is a next page in pagination.
-   * @param {Object} page - The Puppeteer page instance.
-   * @returns {Promise<boolean>} True if next page exists, false otherwise.
-   */
-  async hasNextPage(page) {
-    return page.evaluate((nextPageSelector) => {
-      const nextPageButton = document.querySelector(nextPageSelector);
-      return nextPageButton && nextPageButton.innerText.trim().toLowerCase() === 'siguiente';
-    }, this.config.selectors.nextPageButton);
-  }
+    /**
+     * Checks if there is a next page in pagination.
+     * @param {Object} page - The Puppeteer page instance.
+     * @returns {Promise<boolean>} True if next page exists, false otherwise.
+     */
+    async hasNextPage(page) {
+      let nextPage = false;
+      try {
+        nextPage = await page.evaluate((nextPageText) => {
+          const buttons = document.querySelectorAll('button');
+          return Array.from(buttons).some(button =>
+              button.innerText.trim().toLowerCase() === nextPageText
+          );
+        }, this.config.nextPageText);
+
+        if (nextPage) {
+          console.log(chalk.green(`[INFO] Found "${this.config.nextPageText}" button. Loading more products...`));
+        } else {
+          console.log(chalk.red.bold(`[STOP] NOT Found "${this.config.nextPageText}" button. Stopping scraper.`));
+        }
+
+        return !!nextPage;
+      } catch (e) {
+        console.error(chalk.red.bold(`[ERROR] Failed to check for "${this.config.nextPageText}":`), e);
+        return false;
+      }
+    }
 
   /**
    * Extracts product data from the current page.
@@ -89,11 +103,8 @@ class BaseScraper {
   async extractProducts(page) {
     console.log(chalk.yellow(`Extracting products...`));
     console.log(chalk.yellow(this.config.selectors.productCard));
-    await page.exposeFunction("productNormalizer", this.normalizeProducts)
     return page.evaluate(async (selectors, baseUrl) => {
-      console.log(`Selector: ${selectors.productCard}`)
       const elements = document.querySelectorAll(selectors.productCard);
-      console.log(elements)
 
       return await window.productNormalizer(Array.from(elements || []).map(product => ({
             title: product.querySelector(selectors.title)?.innerText.trim() || null,
@@ -134,14 +145,13 @@ class BaseScraper {
         image,
         link,
         specialPrice,
-        price: finalPrice,
         realPrice,
-        specialDiscount: specialDiscountPercentage ? `${specialDiscountPercentage}%` : null,
-        discount: discountPercentage ? `${discountPercentage}%` : null
+        price: finalPrice,
+        specialDiscount: formatPercentage(specialDiscountPercentage),
+        discount: formatPercentage(discountPercentage),
       };
     });
   }
-
 
   /**
    * Saves scraped results as JSON and CSV files.
@@ -152,10 +162,27 @@ class BaseScraper {
   async saveResults(dir, categoryName, products) {
     const jsonPath = join(dir, `${categoryName}-results.json`);
     const csvPath = join(dir, `${categoryName}-results.csv`);
+
     await saveAsJSON(jsonPath, products);
     console.log(chalk.blue(`[INFO] Saved results as JSON: ${jsonPath}`));
+
     await saveAsCSV(csvPath, products);
     console.log(chalk.blue(`[INFO] Saved results as CSV: ${csvPath}`));
+  }
+
+  async interceptRequests(page) {
+    await page.setRequestInterception(true);
+
+    page.on('request', (req) => {
+      const url = req.url();
+
+      if (url.includes('www.googletagmanager.com')) {
+        console.log(`Blocking request to: ${url}`);
+        req.abort();
+      } else {
+        req.continue();
+      }
+    });
   }
 }
 
