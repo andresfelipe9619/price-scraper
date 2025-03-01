@@ -1,17 +1,32 @@
 const Alkosto = require('./Alkosto')
 const Exito = require('./Exito')
 const Falabella = require('./Falabella')
-const Jumbo = require('./Jumbo')
-const Makro = require('./Makro')
-const Olimpica = require('./Olimpica')
+const IShop = require('./IShop')
+
+// const Jumbo = require('./Jumbo')
+// const Makro = require('./Makro')
+// const Ebay = require('./Ebay')
+// const Claro = require('./Claro')
+// const MacCenter = require('./MacCenter')
+// const MercadoLibre = require('./MercadoLibre')
+// const Movistar = require('./Movistar')
+// const Tigo = require('./Tigo')
+// const Olimpica = require('./Olimpica')
 
 const Scrapers = new Map([
   ['exito', Exito],
-  ['jumbo', Jumbo],
-  ['makro', Makro],
   ['alkosto', Alkosto],
-  ['olimpica', Olimpica],
-  ['falabella', Falabella]
+  ['falabella', Falabella],
+  ['ishop', IShop],
+  // ['jumbo', Jumbo],
+  // ['makro', Makro],
+  // ['olimpica', Olimpica],
+  // ['mercadolibre', MercadoLibre],
+  // ['movistar', Movistar],
+  // ['tigo', Tigo],
+  // ['ebay', Ebay],
+  // ['claro', Claro],
+  // ['maccenter', MacCenter]
 ])
 
 module.exports = Scrapers

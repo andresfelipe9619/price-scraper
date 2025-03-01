@@ -21,7 +21,6 @@ class ExitoScraper extends BaseScraper {
         discount: '[class^="priceSection_container-promotion"]',
         image: 'img[alt="Imagen del producto"]',
         link: 'a[data-testid="product-link"]',
-        nextPageButton: '[class^="Pagination_nextPreviousLink_"]',
       },
     };
     super(browser, config);
