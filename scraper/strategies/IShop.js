@@ -5,7 +5,7 @@ class IShopScraper extends BaseScraper {
   constructor(browser) {
     const config = {
       maxPages: 20,
-      baseUrl: "https://co.tiendasishop.com/",
+      baseUrl: "https://co.tiendasishop.com",
       outputDir: join(__dirname, "../../extracted-data/ishop"),
       categories: {
         iphone: "/search?q=iphone&options%5Bprefix%5D=last&filter.p.vendor=Apple&filter.v.price.gte=&filter.v.price.lte=&sort_by=relevance",

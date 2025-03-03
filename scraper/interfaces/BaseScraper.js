@@ -98,6 +98,7 @@ class BaseScraper {
    */
   async hasNextPage(page) {
     let nextPage = false;
+    if (!this.config.nextPageText) return nextPage
     try {
       nextPage = await page.evaluate((nextPageText, nextPageSelector) => {
         const buttons = document.querySelectorAll(nextPageSelector || 'button');
@@ -134,10 +135,10 @@ class BaseScraper {
       return await window.productNormalizer(Array.from(elements || []).map(product => ({
             title: product.querySelector(selectors.title)?.innerText.trim() || null,
             price: product.querySelector(selectors.price)?.innerText.trim() || null,
-            discount: product.querySelector(selectors.discount)?.innerText.trim() || null,
-            specialPrice: product.querySelector(selectors.specialPrice)?.innerText.trim() || null,
+            discount: selectors.discount ? product.querySelector(selectors.discount)?.innerText.trim() : null,
+            specialPrice: selectors.specialPrice ? product.querySelector(selectors.specialPrice)?.innerText.trim(): null,
             image: product.querySelector(selectors.image)?.getAttribute('src') || null,
-            link: product.querySelector(selectors.link)?.getAttribute('href') ? baseUrl + product.querySelector(selectors.link).getAttribute('href') : null,
+            link: selectors.link && product.querySelector(selectors.link)?.getAttribute('href') ? baseUrl + product.querySelector(selectors.link).getAttribute('href') : null,
           }))
       )
     }, this.config.selectors, this.config.baseUrl);

@@ -19,7 +19,7 @@ function normalizePrice(price, defaultPrice = "$0") {
  * @returns {{percentage: number, amount: number}} An object containing the discount percentage and amount.
  */
 function normalizeDiscount(discount) {
-  if (!discount || discount.trim() === '') return { percentage: 0, amount: 0 };
+  if (!discount || discount.trim() === '') return {percentage: 0, amount: 0};
 
   const cleaned = discount.replace(/\n/g, '').replace(/\s+/g, ' ').trim();
 
@@ -41,7 +41,7 @@ function normalizeDiscount(discount) {
  * @returns {Array[]} An array of chunks.
  */
 function chunkArray(arr, size) {
-  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+  return Array.from({length: Math.ceil(arr.length / size)}, (_, i) =>
       arr.slice(i * size, i * size + size)
   );
 }
@@ -64,4 +64,32 @@ function formatPercentage(value) {
   return value ? `${value}%` : null;
 }
 
-module.exports = { normalizePrice, normalizeDiscount, sleep, chunkArray, formatPercentage };
+/**
+ * Converts a string into a URL-friendly slug.
+ * - Converts the string to lowercase.
+ * - Replaces spaces with hyphens.
+ * - Removes any non-alphanumeric characters except hyphens.
+ *
+ * @param {string} input - The string to be converted into a slug.
+ * @returns {string} The slugified version of the input string.
+ *
+ * @example
+ * const input = "LIBRE IPHONE 13 128GB";
+ * const slug = slugify(input);
+ * console.log(slug); // Output: "libre-iphone-13-128gb"
+ */
+function slugify(input) {
+  return input
+      .toLowerCase() // Convert to lowercase
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/[^a-z0-9-]/g, ''); // Remove any non-alphanumeric characters except hyphens
+}
+
+module.exports = {
+  normalizePrice,
+  normalizeDiscount,
+  sleep,
+  chunkArray,
+  slugify,
+  formatPercentage
+};
