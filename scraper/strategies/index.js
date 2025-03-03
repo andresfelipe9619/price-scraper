@@ -9,7 +9,7 @@ const IShop = require('./IShop')
 // const Claro = require('./Claro')
 // const MacCenter = require('./MacCenter')
 // const MercadoLibre = require('./MercadoLibre')
-// const Movistar = require('./Movistar')
+const Movistar = require('./Movistar')
 // const Tigo = require('./Tigo')
 // const Olimpica = require('./Olimpica')
 
@@ -18,11 +18,11 @@ const Scrapers = new Map([
   ['alkosto', Alkosto],
   ['falabella', Falabella],
   ['ishop', IShop],
+  ['movistar', Movistar],
   // ['jumbo', Jumbo],
   // ['makro', Makro],
   // ['olimpica', Olimpica],
   // ['mercadolibre', MercadoLibre],
-  // ['movistar', Movistar],
   // ['tigo', Tigo],
   // ['ebay', Ebay],
   // ['claro', Claro],
