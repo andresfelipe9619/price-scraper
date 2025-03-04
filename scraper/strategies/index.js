@@ -13,6 +13,7 @@ const Movistar = require('./Movistar')
 // const Tigo = require('./Tigo')
 // const Olimpica = require('./Olimpica')
 
+/** @type {Map<string, import('../interfaces/BaseScraper')>} */
 const Scrapers = new Map([
   ['exito', Exito],
   ['alkosto', Alkosto],

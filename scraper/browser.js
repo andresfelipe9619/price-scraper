@@ -6,6 +6,7 @@ const isTest = process.env.NODE_ENV === 'test'
 async function startBrowser() {
   try {
     console.log(chalk.blue('Starting browser instance...'))
+    // @type {import('puppeteer').Browser} browser - The Puppeteer browser instance.
     const browser = await puppeteer.launch({
       headless: false,
       args: ['--disable-setuid-sandbox', '--window-size=1920,1080'],
