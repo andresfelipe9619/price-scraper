@@ -18,7 +18,7 @@ class MovistarScraper extends BaseScraper {
         specialPrice:null,
         discount: null,
         image: 'img.product-image-photo',
-        link: null,
+        link: null, //TODO: Need to build the link dynamically, maybe using slugify?
       },
     };
     super(browser, config);

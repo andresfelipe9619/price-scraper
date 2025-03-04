@@ -5,22 +5,21 @@ class ClaroScraper extends BaseScraper {
   constructor(browser) {
     const config = {
       maxPages: 20,
-      baseUrl: "https://co.tiendasishop.com/",
-      outputDir: join(__dirname, "../../extracted-data/ishop"),
+      baseUrl: "https://tienda.claro.com.co",
+      outputDir: join(__dirname, "../../extracted-data/claro"),
       categories: {
-        iphone: "/search?q=iphone&options%5Bprefix%5D=last&filter.p.vendor=Apple&filter.v.price.gte=&filter.v.price.lte=&sort_by=relevance",
-        "computadores-apple": "/search?q=macbook&options%5Bprefix%5D=last&filter.p.vendor=Apple&filter.v.price.gte=&filter.v.price.lte=&sort_by=relevance",
+        iphone: "/claro/celulares?facet=manufacturer.raw%253A%2522Apple%2522&urlCategory=celulares",
       },
-      nextPageText: 'página siguiente',
+      nextPageText: null,
       selectors: {
-        productCard: '.search-product-card',
-        title: ".card-head",
-        price: ".c-card__price.c-card__price_eq",
-        specialPrice: ".price-old-class-1",
-        discount: '.price-segment-discount-1',
-        image: 'img.price__container_carousel',
-        link: 'a.full-unstyled-link',
-        nextPage: 'a',
+        productCard: '.equipoElement',
+        title: ".container-name--red > p",
+        price: ".span-pnow1--red",
+        specialPrice: ".span-pbefore1--red",
+        discount: null,
+        image: 'img.img-product',
+        link: null, //TODO: Need to build the link dynamically, maybe using slugify?
+        nextPage: null,
       },
     };
     super(browser, config);
