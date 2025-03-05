@@ -1,7 +1,7 @@
 const BaseScraper = require("../interfaces/BaseScraper");
 const {join} = require("path");
 
-class MercadoLibreScraper extends BaseScraper {
+class AmazonScraper extends BaseScraper {
   constructor(browser) {
     const config = {
       maxPages: 20,
@@ -27,4 +27,4 @@ class MercadoLibreScraper extends BaseScraper {
   }
 }
 
-module.exports = MercadoLibreScraper;
+module.exports = AmazonScraper;
