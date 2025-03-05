@@ -18,6 +18,7 @@ const {sleep, formatPercentage} = require("../../utils");
  * @property {string} outputDir - The directory path to save the extracted data.
  * @property {Object.<string, string>} categories - A map of category names to their respective URL paths.
  * @property {string} nextPageText - The text or ARIA label of the "next page" button.
+ * @property {string} autoScroll - Whether to scroll to the end of page for the next page button to appear.
  * @property {Object} selectors - CSS selectors for extracting product data.
  * @property {string} selectors.productCard - Selector for the product card container.
  * @property {string} selectors.title - Selector for the product title.
@@ -26,6 +27,7 @@ const {sleep, formatPercentage} = require("../../utils");
  * @property {string} selectors.discount - Selector for the discount badge.
  * @property {string} selectors.image - Selector for the product image.
  * @property {string} selectors.link - Selector for the product link.
+ * @property {string} selectors.nextPage - Selector for the next page button.
  */
 
 class BaseScraper {
@@ -87,6 +89,7 @@ class BaseScraper {
 
       console.log(chalk.green.bold(`\n[SUCCESS] Total products scraped for ${categoryName}: ${allProducts.length}`));
       await this.saveResults(categoryDir, categoryName, allProducts);
+      // await sleep(30000)
       await page.close();
     }
   }
@@ -98,20 +101,29 @@ class BaseScraper {
    */
   async hasNextPage(page) {
     let nextPage = false;
-    if (!this.config.nextPageText) return nextPage
+    const {selectors, nextPageText: text} = this.config
+    if (!text && !selectors.nextPage) return nextPage
     try {
+      if (this.config.autoScroll) await this.autoScroll(page)
       nextPage = await page.evaluate((nextPageText, nextPageSelector) => {
-        const buttons = document.querySelectorAll(nextPageSelector || 'button');
-        return Array.from(buttons).some(button =>
-            button.innerText.trim().toLowerCase() === nextPageText ||
-            button.getAttribute('aria-label')?.trim().toLowerCase() === nextPageText
-        );
-      }, this.config.nextPageText, this.config.selectors.nextPage);
+        console.log({nextPageText, nextPageSelector})
+        if (nextPageText) {
+          const buttons = document.querySelectorAll(nextPageSelector || 'button');
+          return Array.from(buttons).some(button =>
+              button.innerText.trim().toLowerCase() === nextPageText ||
+              button.getAttribute('aria-label')?.trim().toLowerCase() === nextPageText
+          );
+        } else if (nextPageSelector) {
+          const button = document.querySelector(nextPageSelector);
+          return !!button
+        }
+
+      }, text, selectors.nextPage);
 
       if (nextPage) {
-        console.log(chalk.green(`[INFO] Found "${this.config.nextPageText}" button (by text or aria-label). Loading more products...`));
+        console.log(chalk.green(`[INFO] Found "${text}" button (by text or aria-label). Loading more products...`));
       } else {
-        console.log(chalk.red.bold(`[STOP] NOT Found "${this.config.nextPageText}" button (by text or aria-label). Stopping scraper.`));
+        console.log(chalk.red.bold(`[STOP] NOT Found "${text}|${selectors.nextPage}" button (by text or aria-label). Stopping scraper.`));
       }
 
       return !!nextPage;
@@ -119,6 +131,24 @@ class BaseScraper {
       console.error(chalk.red.bold(`[ERROR] Failed to check for "${this.config.nextPageText}":`), e);
       return false;
     }
+  }
+
+  async autoScroll(page) {
+    await page.evaluate(async () => {
+      await new Promise((resolve) => {
+        let totalHeight = 0;
+        const distance = 100; // Scroll step
+        const timer = setInterval(() => {
+          const scrollHeight = document.body.scrollHeight;
+          window.scrollBy(0, distance);
+          totalHeight += distance;
+          if (totalHeight >= scrollHeight) {
+            clearInterval(timer);
+            resolve();
+          }
+        }, 100); // Scroll speed
+      });
+    });
   }
 
   /**
@@ -129,6 +159,7 @@ class BaseScraper {
   async extractProducts(page) {
     console.log(chalk.yellow(`Extracting products...`));
     console.log(chalk.yellow(this.config.selectors.productCard));
+    // await sleep(500)
     return page.evaluate(async (selectors, baseUrl) => {
       const elements = document.querySelectorAll(selectors.productCard);
 
@@ -136,7 +167,7 @@ class BaseScraper {
             title: product.querySelector(selectors.title)?.innerText.trim() || null,
             price: product.querySelector(selectors.price)?.innerText.trim() || null,
             discount: selectors.discount ? product.querySelector(selectors.discount)?.innerText.trim() : null,
-            specialPrice: selectors.specialPrice ? product.querySelector(selectors.specialPrice)?.innerText.trim(): null,
+            specialPrice: selectors.specialPrice ? product.querySelector(selectors.specialPrice)?.innerText.trim() : null,
             image: product.querySelector(selectors.image)?.getAttribute('src') || null,
             link: selectors.link && product.querySelector(selectors.link)?.getAttribute('href') ? baseUrl + product.querySelector(selectors.link).getAttribute('href') : null,
           }))
@@ -152,6 +183,7 @@ class BaseScraper {
   async normalizeProducts(products) {
     console.log(chalk.yellow(`Normalizing products...`));
     return (products || []).map(({title, image, price, discount, specialPrice: special, link}) => {
+      console.log({price, discount, special})
       let {
         finalPrice,
         specialPrice,
