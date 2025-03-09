@@ -10,9 +10,9 @@ async function init () {
    // await runScraper('maccenter')
    // await runScraper('tigo')
    // await runScraper('makro')
+   // await runScraper('jumbo')
 
-   await runScraper('jumbo')
-   // await runScraper('olimpica')
+   await runScraper('olimpica')
    // await runScraper('mercadolibre')
    // await runScraper('ebay')
    // await runScraper('amazon')

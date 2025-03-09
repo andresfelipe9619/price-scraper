@@ -5,22 +5,21 @@ class OlimpicaScraper extends BaseScraper {
   constructor(browser) {
     const config = {
       maxPages: 20,
-      baseUrl: "https://www.jumbocolombia.com/",
-      outputDir: join(__dirname, "../../extracted-data/ishop"),
+      baseUrl: "https://www.olimpica.com",
+      outputDir: join(__dirname, "../../extracted-data/olimpica"),
       categories: {
-        iphone: "/search?q=iphone&options%5Bprefix%5D=last&filter.p.vendor=Apple&filter.v.price.gte=&filter.v.price.lte=&sort_by=relevance",
-        "computadores-apple": "/search?q=macbook&options%5Bprefix%5D=last&filter.p.vendor=Apple&filter.v.price.gte=&filter.v.price.lte=&sort_by=relevance",
+        iphone: "/iphone?_q=iphone&map=ft",
       },
-      nextPageText: 'página siguiente',
+      nextPageText: 'Mostrar más',
       selectors: {
-        productCard: '.search-product-card',
-        title: ".card-head",
-        price: ".price__container_carousel",
-        specialPrice: ".price-old-class-1",
-        discount: '.price-segment-discount-1',
-        image: 'img.price__container_carousel',
-        link: 'a.full-unstyled-link',
-        nextPage: 'a',
+        productCard: 'section.vtex-product-summary-2-x-container',
+        title: ".vtex-product-summary-2-x-brandName t-body",
+        price: ".olimpica-dinamic-flags-0-x-priceContainer",
+        specialPrice: ".olimpica-dinamic-flags-0-x-currencyContainer",
+        discount: null,
+        image: 'img.vtex-product-summary-2-x-image',
+        link: null,
+        nextPage: 'button',
       },
     };
     super(browser, config);
