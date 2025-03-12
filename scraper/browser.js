@@ -1,14 +1,14 @@
 const chalk = require('chalk')
 const puppeteer = require('puppeteer')
 
-const isTest = process.env.NODE_ENV === 'test'
+const DEMO_MODE = process.env.DEMO_MODE === 'true';
 
 async function startBrowser() {
   try {
     console.log(chalk.blue('Starting browser instance...'))
     // @type {import('puppeteer').Browser} browser - The Puppeteer browser instance.
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: !DEMO_MODE,
       args: ['--disable-setuid-sandbox', '--window-size=1920,1080'],
       defaultViewport: {
         width: 1920,
