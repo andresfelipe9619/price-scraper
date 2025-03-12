@@ -10,7 +10,8 @@ const {calculatePriceAndDiscounts} = require("./Price");
 const {sleep, formatPercentage} = require("../../utils");
 
 const DEMO_MODE = process.env.DEMO_MODE === 'true';
-const DEMO_TIMING = 300
+const DEMO_TIMING = 300;
+const FIRST_LOAD_WAIT_TIME = 2000;
 
 /**
  * Configuration object for the web scraper.
@@ -65,7 +66,7 @@ class BaseScraper {
         await page.goto(url);
 
         console.log(chalk.yellow(`Waiting for page #${pageIndex} to load...`));
-        await sleep(2000);
+        await sleep(FIRST_LOAD_WAIT_TIME);
 
         try {
           await page.waitForSelector(this.config.selectors.productCard, {timeout: 5000});
@@ -173,7 +174,7 @@ class BaseScraper {
           // Highlight the current product with a red border
           product.style.border = '2px solid red';
           product.style.transition = 'border 0.5s ease';
-          await new Promise(resolve => setTimeout(resolve, 600)); // Delay for demo effect // Delay for demo effect
+          await new Promise(resolve => setTimeout(resolve, 600)); // Delay for demo effect
         }
 
         const productData = {
