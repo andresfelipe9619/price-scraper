@@ -10,7 +10,7 @@ const {calculatePriceAndDiscounts} = require("./Price");
 const {sleep, formatPercentage} = require("../../utils");
 
 const DEMO_MODE = process.env.DEMO_MODE === 'true';
-const DEMO_TIMING = 600
+const DEMO_TIMING = 300
 
 /**
  * Configuration object for the web scraper.
@@ -193,7 +193,7 @@ class BaseScraper {
           await new Promise(resolve => setTimeout(resolve, 600)); // Delay for demo effect // Delay before moving to the next product
         }
       }
-
+      return products;
     }, this.config.selectors, this.config.baseUrl, DEMO_MODE);
   }
 
