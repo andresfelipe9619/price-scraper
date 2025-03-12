@@ -9,6 +9,9 @@ const {join} = require("node:path");
 const {calculatePriceAndDiscounts} = require("./Price");
 const {sleep, formatPercentage} = require("../../utils");
 
+const DEMO_MODE = process.env.DEMO_MODE === 'true';
+const DEMO_TIMING = 600
+
 /**
  * Configuration object for the web scraper.
  *
@@ -51,7 +54,7 @@ class BaseScraper {
 
       console.log(chalk.blue.bold(`\n[INFO] Scraping category: ${categoryName}`));
       const page = await this.browser.newPage();
-      await page.exposeFunction("productNormalizer", this.normalizeProducts);
+      await page.exposeFunction("productNormalizer", this.normalizeProduct);
 
       let pageIndex = 0;
       let allProducts = [];
@@ -89,7 +92,6 @@ class BaseScraper {
 
       console.log(chalk.green.bold(`\n[SUCCESS] Total products scraped for ${categoryName}: ${allProducts.length}`));
       await this.saveResults(categoryDir, categoryName, allProducts);
-      // await sleep(30000)
       await page.close();
     }
   }
@@ -146,69 +148,89 @@ class BaseScraper {
             clearInterval(timer);
             resolve();
           }
-        }, 100); // Scroll speed
+        }, DEMO_MODE ? DEMO_TIMING : 200); // Scroll speed
       });
     });
   }
 
   /**
-   * Extracts product data from the current page.
+   * Extracts product data from the current page and highlights the product in the DOM.
    * @param {import('puppeteer').Page} page - The Puppeteer page instance.
    * @returns {Promise<Array>} List of scraped products.
    */
   async extractProducts(page) {
     console.log(chalk.yellow(`Extracting products...`));
     console.log(chalk.yellow(this.config.selectors.productCard));
-    // await sleep(500)
-    return page.evaluate(async (selectors, baseUrl) => {
+    return page.evaluate(async (selectors, baseUrl, DEMO_MODE) => {
       const elements = document.querySelectorAll(selectors.productCard);
 
-      return await window.productNormalizer(Array.from(elements || []).map(product => ({
-            title: product.querySelector(selectors.title)?.innerText.trim() || null,
-            price: product.querySelector(selectors.price)?.innerText.trim() || null,
-            discount: selectors.discount ? product.querySelector(selectors.discount)?.innerText.trim() : null,
-            specialPrice: selectors.specialPrice ? product.querySelector(selectors.specialPrice)?.innerText.trim() : null,
-            image: product.querySelector(selectors.image)?.getAttribute('src') || null,
-            link: selectors.link && product.querySelector(selectors.link)?.getAttribute('href') ? baseUrl + product.querySelector(selectors.link).getAttribute('href') : null,
-          }))
-      )
-    }, this.config.selectors, this.config.baseUrl);
+      const products = [];
+      for (const product of elements) {
+
+        if (DEMO_MODE) {
+          //TODO: Fix Conflict with autoscroll config
+          product.scrollIntoView({behavior: 'smooth', block: 'center'});
+          // Highlight the current product with a red border
+          product.style.border = '2px solid red';
+          product.style.transition = 'border 0.5s ease';
+          await new Promise(resolve => setTimeout(resolve, 600)); // Delay for demo effect // Delay for demo effect
+        }
+
+        const productData = {
+          title: product.querySelector(selectors.title)?.innerText.trim() || null,
+          price: product.querySelector(selectors.price)?.innerText.trim() || null,
+          discount: selectors.discount ? product.querySelector(selectors.discount)?.innerText.trim() : null,
+          specialPrice: selectors.specialPrice ? product.querySelector(selectors.specialPrice)?.innerText.trim() : null,
+          image: product.querySelector(selectors.image)?.getAttribute('src') || null,
+          link: selectors.link && product.querySelector(selectors.link)?.getAttribute('href') ? baseUrl + product.querySelector(selectors.link).getAttribute('href') : null,
+        };
+
+        products.push(await window.productNormalizer(productData));
+
+        if (DEMO_MODE) {
+          // Remove the highlight after processing
+          product.style.border = '';
+          await new Promise(resolve => setTimeout(resolve, 600)); // Delay for demo effect // Delay before moving to the next product
+        }
+      }
+
+    }, this.config.selectors, this.config.baseUrl, DEMO_MODE);
   }
 
   /**
    * Extracts product data from the current page.
-   * @param {Array<Object>} products - The products extracted.
-   * @returns {Array<Object>} List of scraped products with normalized prices.
+   * @param {Object} product - The extracted product.
+   * @returns {Object} Scraped product with normalized prices.
    */
-  async normalizeProducts(products) {
-    console.log(chalk.yellow(`Normalizing products...`));
-    return (products || []).map(({title, image, price, discount, specialPrice: special, link}) => {
-      console.log({price, discount, special})
-      let {
-        finalPrice,
-        specialPrice,
-        realPrice,
-        discountPercentage,
-        specialDiscountPercentage
-      } = calculatePriceAndDiscounts(price, special, discount);
+  async normalizeProduct(product) {
+    console.log(chalk.yellow(`Normalizing product...`));
+    let {title, image, price, discount, specialPrice: special, link} = product
+    console.log({price, discount, special})
+    let {
+      finalPrice,
+      specialPrice,
+      realPrice,
+      discountPercentage,
+      specialDiscountPercentage
+    } = calculatePriceAndDiscounts(price, special, discount);
 
-      console.log(chalk.magenta('\n[PRODUCT] Processed product:'), chalk.yellow(title || 'Unknown'));
-      console.log(chalk.cyan(`  - Final Price: ${chalk.yellow(finalPrice)}`));
-      console.log(chalk.cyan(`  - Real Price: ${chalk.yellow(realPrice)}`));
-      console.log(chalk.cyan(`  - Discount: ${chalk.yellow(discountPercentage || '0')}%`));
-      if (special) console.log(chalk.cyan(`  - Special Discount: ${chalk.yellow(specialDiscountPercentage || '0')}%`));
+    console.log(chalk.magenta('\n[PRODUCT] Processed product:'), chalk.yellow(title || 'Unknown'));
+    console.log(chalk.cyan(`  - Final Price: ${chalk.yellow(finalPrice)}`));
+    console.log(chalk.cyan(`  - Real Price: ${chalk.yellow(realPrice)}`));
+    console.log(chalk.cyan(`  - Discount: ${chalk.yellow(discountPercentage || '0')}%`));
+    if (special) console.log(chalk.cyan(`  - Special Discount: ${chalk.yellow(specialDiscountPercentage || '0')}%`));
 
-      return {
-        title,
-        image,
-        link,
-        specialPrice,
-        realPrice,
-        price: finalPrice,
-        specialDiscount: formatPercentage(specialDiscountPercentage),
-        discount: formatPercentage(discountPercentage),
-      };
-    });
+    if (DEMO_MODE) await sleep(DEMO_TIMING)
+    return {
+      title,
+      image,
+      link,
+      specialPrice,
+      realPrice,
+      price: finalPrice,
+      specialDiscount: formatPercentage(specialDiscountPercentage),
+      discount: formatPercentage(discountPercentage),
+    };
   }
 
   /**

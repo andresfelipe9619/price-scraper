@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node API.js",
     "migrate:init": "prisma migrate dev --name init",
-    "test": "NODE_ENV=test node __tests__/scraper.js"
+    "test": "NODE_ENV=test node __tests__/scraper.js",
+    "demo": "DEMO_MODE=true npm run test"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
