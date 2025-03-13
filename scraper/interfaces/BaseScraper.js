@@ -204,9 +204,10 @@ class BaseScraper {
    * @returns {Object} Scraped product with normalized prices.
    */
   async normalizeProduct(product) {
-    console.log(chalk.yellow(`Normalizing product...`));
-    let {title, image, price, discount, specialPrice: special, link} = product
-    console.log({price, discount, special})
+    console.log(chalk.yellow('🔧 Normalizing product...'));
+    let {title, image, price, discount, specialPrice: special, link} = product;
+    console.log('📊 Price data:', {price, discount, special});
+
     let {
       finalPrice,
       specialPrice,
@@ -215,13 +216,14 @@ class BaseScraper {
       specialDiscountPercentage
     } = calculatePriceAndDiscounts(price, special, discount);
 
-    console.log(chalk.magenta('\n[PRODUCT] Processed product:'), chalk.yellow(title || 'Unknown'));
-    console.log(chalk.cyan(`  - Final Price: ${chalk.yellow(finalPrice)}`));
-    console.log(chalk.cyan(`  - Real Price: ${chalk.yellow(realPrice)}`));
-    console.log(chalk.cyan(`  - Discount: ${chalk.yellow(discountPercentage || '0')}%`));
-    if (special) console.log(chalk.cyan(`  - Special Discount: ${chalk.yellow(specialDiscountPercentage || '0')}%`));
+    console.log(chalk.magenta('\n🛍️ [PRODUCT] Processed product:'), chalk.yellow(title || 'Unknown'));
+    console.log(chalk.cyan(`  💲 Final Price: ${chalk.yellow(finalPrice)}`));
+    console.log(chalk.cyan(`  🏷️ Real Price: ${chalk.yellow(realPrice)}`));
+    console.log(chalk.cyan(`  📉 Discount: ${chalk.yellow(discountPercentage || '0')}%`));
+    if (special) console.log(chalk.cyan(`  ✨ Special Discount: ${chalk.yellow(specialDiscountPercentage || '0')}%`));
 
-    if (DEMO_MODE) await sleep(DEMO_TIMING)
+    if (DEMO_MODE) await sleep(DEMO_TIMING);
+
     return {
       title,
       image,
@@ -232,6 +234,7 @@ class BaseScraper {
       specialDiscount: formatPercentage(specialDiscountPercentage),
       discount: formatPercentage(discountPercentage),
     };
+
   }
 
   /**
