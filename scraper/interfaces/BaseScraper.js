@@ -136,6 +136,13 @@ class BaseScraper {
     }
   }
 
+  /**
+   * Scrolls the page to the bottom, loading all dynamically loaded content.
+   * @async
+   * @function autoScroll
+   * @param {import('puppeteer').Page} page - The Puppeteer page instance.
+   * @returns {Promise<void>} - A promise that resolves when the page has finished scrolling.
+   */
   async autoScroll(page) {
     await page.evaluate(async () => {
       await new Promise((resolve) => {
@@ -204,23 +211,35 @@ class BaseScraper {
    * @returns {Object} Scraped product with normalized prices.
    */
   async normalizeProduct(product) {
+    const delimiterChar = '-';
+    const delimiterLength = 80;
+    const delimiter = delimiterChar.repeat(delimiterLength);
+
+    console.log(delimiter);
     console.log(chalk.yellow('🔧 Normalizing product...'));
     let {title, image, price, discount, specialPrice: special, link} = product;
-    console.log('📊 Price data:', {price, discount, special});
 
     let {
       finalPrice,
       specialPrice,
       realPrice,
       discountPercentage,
-      specialDiscountPercentage
+      specialDiscountPercentage,
     } = calculatePriceAndDiscounts(price, special, discount);
 
     console.log(chalk.magenta('\n🛍️ [PRODUCT] Processed product:'), chalk.yellow(title || 'Unknown'));
     console.log(chalk.cyan(`  💲 Final Price: ${chalk.yellow(finalPrice)}`));
     console.log(chalk.cyan(`  🏷️ Real Price: ${chalk.yellow(realPrice)}`));
     console.log(chalk.cyan(`  📉 Discount: ${chalk.yellow(discountPercentage || '0')}%`));
-    if (special) console.log(chalk.cyan(`  ✨ Special Discount: ${chalk.yellow(specialDiscountPercentage || '0')}%`));
+    if (special)
+      console.log(
+          chalk.cyan(
+              `  ✨ Special Discount: ${chalk.yellow(
+                  specialDiscountPercentage || '0'
+              )}%`
+          )
+      );
+    console.log(delimiter);
 
     if (DEMO_MODE) await sleep(DEMO_TIMING);
 
@@ -234,7 +253,6 @@ class BaseScraper {
       specialDiscount: formatPercentage(specialDiscountPercentage),
       discount: formatPercentage(discountPercentage),
     };
-
   }
 
   /**

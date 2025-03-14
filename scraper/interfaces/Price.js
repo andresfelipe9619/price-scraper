@@ -22,6 +22,7 @@ const {normalizePrice, normalizeDiscount} = require('../../utils');
  */
 function calculatePriceAndDiscounts(price, special, discount) {
   console.log(chalk.blue.bold('\n[INFO] Calculating Price and Discounts...'));
+  console.log('📊 Price data:', JSON.stringify({price, discount, special}));
 
   // Normalize inputs
   const finalPrice = normalizePrice(price);
