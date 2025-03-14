@@ -4,23 +4,23 @@ const {join} = require("path");
 class MercadoLibreScraper extends BaseScraper {
   constructor(browser) {
     const config = {
-      maxPages: 20,
-      baseUrl: "https://co.tiendasishop.com",
-      outputDir: join(__dirname, "../../extracted-data/ishop"),
+      maxPages: 1,
+      baseUrl: "https://listado.mercadolibre.com.co",
+      outputDir: join(__dirname, "../../extracted-data/mercadolibre"),
       categories: {
-        iphone: "/search?q=iphone&options%5Bprefix%5D=last&filter.p.vendor=Apple&filter.v.price.gte=&filter.v.price.lte=&sort_by=relevance",
-        "computadores-apple": "/search?q=macbook&options%5Bprefix%5D=last&filter.p.vendor=Apple&filter.v.price.gte=&filter.v.price.lte=&sort_by=relevance",
+        iphone: "/iphone-15#D[A:iphone%2015]",
+        // "computadores-apple": "/search?q=macbook&options%5Bprefix%5D=last&filter.p.vendor=Apple&filter.v.price.gte=&filter.v.price.lte=&sort_by=relevance",
       },
-      nextPageText: 'página siguiente',
+      nextPageText: 'siguiente',
       selectors: {
-        productCard: '.search-product-card',
-        title: ".card-head",
-        price: ".price__container_carousel",
-        specialPrice: ".price-old-class-1",
-        discount: '.price-segment-discount-1',
-        image: 'img.price__container_carousel',
-        link: 'a.full-unstyled-link',
-        nextPage: 'a',
+        productCard: '.poly-card--list',
+        title: ".poly-component__title",
+        price: ".poly-price__current",
+        specialPrice: ".poly-rebates__pill",
+        discount: '.andes-money-amount__discount',
+        image: 'img.poly-component__picture',
+        link: 'a.poly-component__title',
+        nextPage: 'span',
       },
     };
     super(browser, config);
