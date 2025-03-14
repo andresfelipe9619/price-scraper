@@ -11,7 +11,7 @@ class MercadoLibreScraper extends BaseScraper {
         iphone: "/iphone-15#D[A:iphone%2015]",
         // "computadores-apple": "/search?q=macbook&options%5Bprefix%5D=last&filter.p.vendor=Apple&filter.v.price.gte=&filter.v.price.lte=&sort_by=relevance",
       },
-      nextPageText: 'siguiente',
+      nextPageText: 'siguiente', //TODO: Pagination not working as normal, they have a very different way
       selectors: {
         productCard: '.poly-card--list',
         title: ".poly-component__title",

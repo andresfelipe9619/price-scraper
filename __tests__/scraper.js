@@ -17,7 +17,7 @@ async function init() {
   // await runScraper('ebay')
   // await runScraper('amazon')
 
-  await Promise.all([runScraper('alkosto'), runScraper('maccenter')])
+  // await Promise.all([runScraper('alkosto'), runScraper('maccenter')])
 
 }
 
