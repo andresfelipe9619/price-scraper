@@ -21,7 +21,15 @@ function calculatePriceAndDiscounts(product) {
   console.log(chalk.blue.bold("\n[INFO] Calculating Price and Discounts..."));
   console.log(
     "📊 Price data:",
-    JSON.stringify(pick(product, ["finalPrice", "discountPrice"])),
+    JSON.stringify(
+      pick(product, [
+        "finalPrice",
+        "discountPrice",
+        "discountPercentage",
+        "specialDiscountPrice",
+        "specialDiscountPercentage",
+      ]),
+    ),
   );
 
   // Normalize inputs

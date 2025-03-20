@@ -8,7 +8,8 @@ class FalabellaScraper extends BaseScraper {
       baseUrl: "https://www.falabella.com.co",
       outputDir: join(__dirname, "../../extracted-data/falabella"),
       categories: {
-        // "iphone": "/falabella-co/category/cat1660941/Celulares-y-Telefonos?f.product.brandName=apple",
+        iphone:
+          "/falabella-co/category/cat1660941/Celulares-y-Telefonos?f.product.brandName=apple",
         "computadores-apple":
           "/falabella-co/category/cat171006/Computadores?facetSelected=true&f.product.brandName=apple",
       },
@@ -17,8 +18,9 @@ class FalabellaScraper extends BaseScraper {
         productCard: ".search-results-4-grid.grid-pod",
         title: "b.copy2",
         price: "span.copy10.primary.medium",
-        specialDiscountPrice: "span.copy10.primary.high",
+        discountPrice: "span.copy3.primary.crossed",
         discountPercentage: ".discount-badge",
+        specialDiscountPrice: "span.copy10.primary.high",
         image: "picture > img",
         link: "a.pod-link",
       },

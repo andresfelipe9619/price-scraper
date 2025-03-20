@@ -394,10 +394,7 @@ class BaseScraper {
       mkdirSync(outputDir, { recursive: true });
 
       await saveAsJSON(jsonPath, products);
-      console.log(chalk.blue(`[INFO] Saved results as JSON: ${jsonPath}`));
-
       await saveAsCSV(csvPath, products);
-      console.log(chalk.blue(`[INFO] Saved results as CSV: ${csvPath}`));
     } catch (error) {
       console.error(
         chalk.red(`[ERROR] Failed to save results: ${error.message}`),
