@@ -241,24 +241,28 @@ class BaseScraper {
    * @returns {Promise<void>} - A promise that resolves when the page has finished scrolling.
    */
   async autoScroll(page) {
-    await page.evaluate(async () => {
-      await new Promise((resolve) => {
-        let totalHeight = 0;
-        const distance = 100; // Scroll step
-        const timer = setInterval(
-          () => {
-            const scrollHeight = document.body.scrollHeight;
-            window.scrollBy(0, distance);
-            totalHeight += distance;
-            if (totalHeight >= scrollHeight) {
-              clearInterval(timer);
-              resolve();
-            }
-          },
-          DEMO_MODE ? DEMO_TIMING : 200,
-        ); // Scroll speed
-      });
-    });
+    await page.evaluate(
+      async (DEMO_MODE, DEMO_TIMING) => {
+        await new Promise((resolve) => {
+          let totalHeight = 0;
+          const distance = 100; // Scroll step
+          const timer = setInterval(
+            () => {
+              const scrollHeight = document.body.scrollHeight;
+              window.scrollBy(0, distance);
+              totalHeight += distance;
+              if (totalHeight >= scrollHeight) {
+                clearInterval(timer);
+                resolve();
+              }
+            },
+            DEMO_MODE ? DEMO_TIMING : 200,
+          ); // Scroll speed
+        });
+      },
+      DEMO_MODE,
+      DEMO_TIMING,
+    );
   }
 
   /**

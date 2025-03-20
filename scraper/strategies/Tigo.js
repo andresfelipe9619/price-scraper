@@ -4,7 +4,7 @@ const { join } = require("path");
 class TigoScraper extends BaseScraper {
   constructor(browser) {
     const config = {
-      maxPages: 20,
+      maxPages: 2,
       baseUrl: "https://compras.tigo.com.co",
       outputDir: join(__dirname, "../../extracted-data/tigo"),
       categories: {
@@ -14,10 +14,11 @@ class TigoScraper extends BaseScraper {
       selectors: {
         productCard: ".celulares---tigo-colombia",
         title: ".containerVersionReact--contentTitle__productName",
-        price: ".containerVersionReact--contentPrice__price",
-        specialDiscountPrice: null,
+        price: ".containerVersionReact--contentPrice__bestPrice",
+        discountPrice: ".containerVersionReact--contentPrice__listPrice",
         discountPercentage:
           ".containerVersionReact--contentDiscount--highlightPrice",
+        specialDiscountPrice: null,
         image: "a.item-image > img",
         link: "a.item-image",
         nextPage: null,

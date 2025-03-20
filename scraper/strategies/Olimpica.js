@@ -14,9 +14,9 @@ class OlimpicaScraper extends BaseScraper {
       selectors: {
         productCard: "section.vtex-product-summary-2-x-container",
         title: ".vtex-product-summary-2-x-brandName t-body",
-        price: ".olimpica-dinamic-flags-0-x-priceContainer",
-        specialDiscountPrice: ".olimpica-dinamic-flags-0-x-currencyContainer",
-        discount: null,
+        price: ".vtex-product-price-1-x-sellingPrice--hasListPrice--dynamicF",
+        discountPrice: ".olimpica-dinamic-flags-0-x-currencyContainer",
+        discountPercentage: null,
         image: "img.vtex-product-summary-2-x-image",
         link: null,
         nextPage: "button",
