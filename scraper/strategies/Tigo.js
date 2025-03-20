@@ -1,5 +1,5 @@
 const BaseScraper = require("../interfaces/BaseScraper");
-const {join} = require("path");
+const { join } = require("path");
 
 class TigoScraper extends BaseScraper {
   constructor(browser) {
@@ -12,13 +12,14 @@ class TigoScraper extends BaseScraper {
       },
       nextPageText: null,
       selectors: {
-        productCard: '.celulares---tigo-colombia',
+        productCard: ".celulares---tigo-colombia",
         title: ".containerVersionReact--contentTitle__productName",
         price: ".containerVersionReact--contentPrice__price",
         specialDiscountPrice: null,
-        discountPercentage: '.containerVersionReact--contentDiscount--highlightPrice',
-        image: 'a.item-image > img',
-        link: 'a.item-image',
+        discountPercentage:
+          ".containerVersionReact--contentDiscount--highlightPrice",
+        image: "a.item-image > img",
+        link: "a.item-image",
         nextPage: null,
       },
     };

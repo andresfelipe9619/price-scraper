@@ -1,5 +1,5 @@
 const BaseScraper = require("../interfaces/BaseScraper");
-const {join} = require("path");
+const { join } = require("path");
 
 class MovistarScraper extends BaseScraper {
   constructor(browser) {
@@ -12,12 +12,12 @@ class MovistarScraper extends BaseScraper {
       },
       nextPageText: null,
       selectors: {
-        productCard: '.card_link',
+        productCard: ".card_link",
         title: ".cat-card__name",
         price: ".c-card__price",
-        specialDiscountPrice:null,
+        specialDiscountPrice: null,
         discount: null,
-        image: 'img.product-image-photo',
+        image: "img.product-image-photo",
         link: null, //TODO: Need to build the link dynamically, maybe using slugify?
       },
     };

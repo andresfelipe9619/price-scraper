@@ -4,7 +4,7 @@
  */
 const fs = require("fs");
 const chalk = require("chalk");
-const {parse} = require('json2csv');
+const { parse } = require("json2csv");
 
 /**
  * Saves data to a file in JSON format.
@@ -44,5 +44,5 @@ async function saveAsCSV(name, data) {
 
 module.exports = {
   saveAsJSON,
-  saveAsCSV
+  saveAsCSV,
 };

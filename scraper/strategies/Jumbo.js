@@ -1,5 +1,5 @@
 const BaseScraper = require("../interfaces/BaseScraper");
-const {join} = require("path");
+const { join } = require("path");
 
 class JumboScraper extends BaseScraper {
   constructor(browser) {
@@ -13,13 +13,14 @@ class JumboScraper extends BaseScraper {
       autoScroll: true,
       nextPageText: null,
       selectors: {
-        productCard: 'section.vtex-product-summary-2-x-container',
-        title: '.vtex-product-summary-2-x-productNameContainer',
-        price: '.tiendasjumboqaio-jumbo-minicart-2-x-price',
+        productCard: "section.vtex-product-summary-2-x-container",
+        title: ".vtex-product-summary-2-x-productNameContainer",
+        price: ".tiendasjumboqaio-jumbo-minicart-2-x-price",
         specialDiscountPrice: ".tiendasjumboqaio-jumbo-minicart-2-x-price",
-        discount: ".tiendasjumboqaio-jumbo-minicart-2-x-containerPercentageFlag",
-        image: 'img.vtex-product-summary-2-x-imageNormal',
-        link: 'a.vtex-product-summary-2-x-clearLink',
+        discount:
+          ".tiendasjumboqaio-jumbo-minicart-2-x-containerPercentageFlag",
+        image: "img.vtex-product-summary-2-x-imageNormal",
+        link: "a.vtex-product-summary-2-x-clearLink",
         nextPage: ".tiendasjumboqaio-jumbo-fetch-more-paginator-0-x-contentSvg",
       },
     };

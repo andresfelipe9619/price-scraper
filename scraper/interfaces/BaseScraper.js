@@ -2,40 +2,46 @@
  * BaseScraper - A generic web scraper for extracting product data across multiple categories.
  * Handles pagination, product extraction, and saving results in multiple formats.
  */
-const chalk = require('chalk');
-const {saveAsJSON, saveAsCSV} = require("./Export");
-const {mkdirSync, existsSync} = require("node:fs");
-const {join} = require("node:path");
-const {calculatePriceAndDiscounts} = require("./Price");
-const {sleep, formatPercentage} = require("../../utils");
+const chalk = require("chalk");
+const { saveAsJSON, saveAsCSV } = require("./Export");
+const { mkdirSync, existsSync } = require("node:fs");
+const { join } = require("node:path");
+const { calculatePriceAndDiscounts } = require("./Price");
+const { sleep, formatPercentage } = require("../../utils");
 
-const DEMO_MODE = process.env.DEMO_MODE === 'true';
+const DEMO_MODE = process.env.DEMO_MODE === "true";
 const DEMO_TIMING = 300;
 const FIRST_LOAD_WAIT_TIME = 2000;
 
 function logProductData({
-                          title,
-                          finalPrice,
-                          originalPrice,
-                          discountPercentage,
-                          specialDiscountPrice,
-                          specialDiscountPercentage
-                        }) {
-  console.log(chalk.magenta('\n[PRODUCT] Processed product:'), chalk.yellow(title || 'Unknown'));
+  title,
+  finalPrice,
+  originalPrice,
+  discountPercentage,
+  specialDiscountPrice,
+  specialDiscountPercentage,
+}) {
+  console.log(
+    chalk.magenta("\n[PRODUCT] Processed product:"),
+    chalk.yellow(title || "Unknown"),
+  );
   console.log(chalk.cyan(`  💲 Final Price: ${chalk.yellow(finalPrice)}`));
-  console.log(chalk.cyan(`  🏷️ Original Price: ${chalk.yellow(originalPrice)}`));
-  console.log(chalk.cyan(`  📉 Discount: ${chalk.yellow(discountPercentage || '0')}%`));
+  console.log(
+    chalk.cyan(`  🏷️ Original Price: ${chalk.yellow(originalPrice)}`),
+  );
+  console.log(
+    chalk.cyan(`  📉 Discount: ${chalk.yellow(discountPercentage || "0")}%`),
+  );
   if (specialDiscountPrice) {
     console.log(
-        chalk.cyan(
-            `  ✨ Special Discount: ${chalk.yellow(
-                specialDiscountPercentage || '0'
-            )}%`
-        )
+      chalk.cyan(
+        `  ✨ Special Discount: ${chalk.yellow(
+          specialDiscountPercentage || "0",
+        )}%`,
+      ),
     );
   }
 }
-
 
 /**
  * Configuration object for the web scraper.
@@ -75,11 +81,15 @@ class BaseScraper {
    * Starts the scraping process for all categories.
    */
   async exec() {
-    for (const [categoryName, categoryPath] of Object.entries(this.config.categories)) {
+    for (const [categoryName, categoryPath] of Object.entries(
+      this.config.categories,
+    )) {
       const categoryDir = join(this.config.outputDir, categoryName);
-      if (!existsSync(categoryDir)) mkdirSync(categoryDir, {recursive: true});
+      if (!existsSync(categoryDir)) mkdirSync(categoryDir, { recursive: true });
 
-      console.log(chalk.blue.bold(`\n[INFO] Scraping category: ${categoryName}`));
+      console.log(
+        chalk.blue.bold(`\n[INFO] Scraping category: ${categoryName}`),
+      );
       const page = await this.browser.newPage();
       await page.exposeFunction("productNormalizer", this.normalizeProduct);
 
@@ -88,38 +98,63 @@ class BaseScraper {
 
       while (pageIndex < this.config.maxPages) {
         const url = `${this.config.baseUrl}${pageIndex === 0 ? categoryPath : `${categoryPath}&page=${pageIndex}`}`;
-        console.log(chalk.blue.bold('\n[INFO] Navigating to page:'), chalk.cyan(url));
+        console.log(
+          chalk.blue.bold("\n[INFO] Navigating to page:"),
+          chalk.cyan(url),
+        );
         await page.goto(url);
 
         console.log(chalk.yellow(`Waiting for page #${pageIndex} to load...`));
         await sleep(FIRST_LOAD_WAIT_TIME);
-        const modalSelector = this.config.selectors.firstVisitModal
+        const modalSelector = this.config.selectors.firstVisitModal;
 
         if (modalSelector) {
           console.log(chalk.yellow(`Closing first visit modal...`));
           try {
-            await page.waitForSelector(modalSelector, {timeout: FIRST_LOAD_WAIT_TIME * 2});
-            await page.click(modalSelector + ' button');
+            await page.waitForSelector(modalSelector, {
+              timeout: FIRST_LOAD_WAIT_TIME * 2,
+            });
+            await page.click(modalSelector + " button");
             await sleep(500);
           } catch (error) {
-            console.log(chalk.red.bold(`[ERROR] Failed to close the first visit modal: ${error.message}`));
+            console.log(
+              chalk.red.bold(
+                `[ERROR] Failed to close the first visit modal: ${error.message}`,
+              ),
+            );
           }
         }
 
         try {
-          await page.waitForSelector(this.config.selectors.productCard, {timeout: FIRST_LOAD_WAIT_TIME * 2});
+          await page.waitForSelector(this.config.selectors.productCard, {
+            timeout: FIRST_LOAD_WAIT_TIME * 2,
+          });
           console.log(chalk.green(`Page #${pageIndex} loaded successfully!`));
         } catch (error) {
-          console.log(chalk.red.bold(`[ERROR] Failed to load products on page #${pageIndex}: ${error.message}`));
-          console.log(chalk.yellow.bold(`[INFO] Saving the collected products so far for category: ${categoryName}`));
+          console.log(
+            chalk.red.bold(
+              `[ERROR] Failed to load products on page #${pageIndex}: ${error.message}`,
+            ),
+          );
+          console.log(
+            chalk.yellow.bold(
+              `[INFO] Saving the collected products so far for category: ${categoryName}`,
+            ),
+          );
           break; // Exit the loop but continue to save results
         }
 
         const products = await this.extractProducts(page);
-        console.log(chalk.cyan(`Adding ${products.length} products from page #${pageIndex}...`));
+        console.log(
+          chalk.cyan(
+            `Adding ${products.length} products from page #${pageIndex}...`,
+          ),
+        );
 
         if (!products?.length) {
-          console.log(chalk.red.bold('[STOP] No more products found. Stopping scraper.'));
+          console.log(
+            chalk.red.bold("[STOP] No more products found. Stopping scraper."),
+          );
           break;
         }
         allProducts = allProducts.concat(products);
@@ -129,7 +164,11 @@ class BaseScraper {
         pageIndex++;
       }
 
-      console.log(chalk.green.bold(`\n[SUCCESS] Total products scraped for ${categoryName}: ${allProducts.length}`));
+      console.log(
+        chalk.green.bold(
+          `\n[SUCCESS] Total products scraped for ${categoryName}: ${allProducts.length}`,
+        ),
+      );
       await this.saveResults(categoryDir, categoryName, allProducts);
       await page.close();
     }
@@ -142,34 +181,54 @@ class BaseScraper {
    */
   async hasNextPage(page) {
     let nextPage = false;
-    const {selectors, nextPageText: text} = this.config
-    if (!text && !selectors.nextPage) return nextPage
+    const { selectors, nextPageText: text } = this.config;
+    if (!text && !selectors.nextPage) return nextPage;
     try {
-      if (this.config.autoScroll) await this.autoScroll(page)
-      nextPage = await page.evaluate((nextPageText, nextPageSelector) => {
-        console.log({nextPageText, nextPageSelector})
-        if (nextPageText) {
-          const buttons = document.querySelectorAll(nextPageSelector || 'button');
-          return Array.from(buttons).some(button =>
-              button.innerText.trim().toLowerCase() === nextPageText ||
-              button.getAttribute('aria-label')?.trim().toLowerCase() === nextPageText
-          );
-        } else if (nextPageSelector) {
-          const button = document.querySelector(nextPageSelector);
-          return !!button
-        }
-
-      }, text, selectors.nextPage);
+      if (this.config.autoScroll) await this.autoScroll(page);
+      nextPage = await page.evaluate(
+        (nextPageText, nextPageSelector) => {
+          console.log({ nextPageText, nextPageSelector });
+          if (nextPageText) {
+            const buttons = document.querySelectorAll(
+              nextPageSelector || "button",
+            );
+            return Array.from(buttons).some(
+              (button) =>
+                button.innerText.trim().toLowerCase() === nextPageText ||
+                button.getAttribute("aria-label")?.trim().toLowerCase() ===
+                  nextPageText,
+            );
+          } else if (nextPageSelector) {
+            const button = document.querySelector(nextPageSelector);
+            return !!button;
+          }
+        },
+        text,
+        selectors.nextPage,
+      );
 
       if (nextPage) {
-        console.log(chalk.green(`[INFO] Found "${text}" button (by text or aria-label). Loading more products...`));
+        console.log(
+          chalk.green(
+            `[INFO] Found "${text}" button (by text or aria-label). Loading more products...`,
+          ),
+        );
       } else {
-        console.log(chalk.red.bold(`[STOP] NOT Found "${text}|${selectors.nextPage}" button (by text or aria-label). Stopping scraper.`));
+        console.log(
+          chalk.red.bold(
+            `[STOP] NOT Found "${text}|${selectors.nextPage}" button (by text or aria-label). Stopping scraper.`,
+          ),
+        );
       }
 
       return !!nextPage;
     } catch (e) {
-      console.error(chalk.red.bold(`[ERROR] Failed to check for "${this.config.nextPageText}":`), e);
+      console.error(
+        chalk.red.bold(
+          `[ERROR] Failed to check for "${this.config.nextPageText}":`,
+        ),
+        e,
+      );
       return false;
     }
   }
@@ -186,15 +245,18 @@ class BaseScraper {
       await new Promise((resolve) => {
         let totalHeight = 0;
         const distance = 100; // Scroll step
-        const timer = setInterval(() => {
-          const scrollHeight = document.body.scrollHeight;
-          window.scrollBy(0, distance);
-          totalHeight += distance;
-          if (totalHeight >= scrollHeight) {
-            clearInterval(timer);
-            resolve();
-          }
-        }, DEMO_MODE ? DEMO_TIMING : 200); // Scroll speed
+        const timer = setInterval(
+          () => {
+            const scrollHeight = document.body.scrollHeight;
+            window.scrollBy(0, distance);
+            totalHeight += distance;
+            if (totalHeight >= scrollHeight) {
+              clearInterval(timer);
+              resolve();
+            }
+          },
+          DEMO_MODE ? DEMO_TIMING : 200,
+        ); // Scroll speed
       });
     });
   }
@@ -207,47 +269,75 @@ class BaseScraper {
   async extractProducts(page) {
     console.log(chalk.yellow(`Extracting products...`));
     console.log(chalk.yellow(this.config.selectors.productCard));
-    return page.evaluate(async (selectors, baseUrl, DEMO_MODE) => {
-      const elements = document.querySelectorAll(selectors.productCard);
+    return page.evaluate(
+      async (selectors, baseUrl, DEMO_MODE) => {
+        const elements = document.querySelectorAll(selectors.productCard);
 
-      const products = [];
-      for (const product of elements) {
+        const products = [];
+        for (const product of elements) {
+          if (DEMO_MODE) {
+            //TODO: Fix Conflict with autoscroll config
+            product.scrollIntoView({ behavior: "smooth", block: "center" });
+            // Highlight the current product with a red border
+            product.style.border = "2px solid red";
+            product.style.transition = "border 0.5s ease";
+            await new Promise((resolve) => setTimeout(resolve, 600)); // Delay for demo effect
+          }
 
-        if (DEMO_MODE) {
-          //TODO: Fix Conflict with autoscroll config
-          product.scrollIntoView({behavior: 'smooth', block: 'center'});
-          // Highlight the current product with a red border
-          product.style.border = '2px solid red';
-          product.style.transition = 'border 0.5s ease';
-          await new Promise(resolve => setTimeout(resolve, 600)); // Delay for demo effect
+          // We have a `finalPrice` field, this is the final price; the one is displayed on the store.
+          // Also, we have the `discountPercentage` and `discountPrice`;
+          // this means a store can display both or just one of them, so if we have both is nice, but if not,
+          // we should calculate the other one based on the final price,
+          // this is the same to `specialDiscountPrice` and `specialDiscountPercentage`.
+          const productData = {
+            title:
+              product.querySelector(selectors.title)?.innerText.trim() || null,
+            image: selectors.image
+              ? product.querySelector(selectors.image)?.getAttribute("src") ||
+                null
+              : null,
+            link:
+              selectors.link &&
+              product.querySelector(selectors.link)?.getAttribute("href")
+                ? baseUrl +
+                  product.querySelector(selectors.link).getAttribute("href")
+                : null,
+            finalPrice:
+              product.querySelector(selectors.price)?.innerText.trim() || null,
+            discountPercentage: selectors.discountPercentage
+              ? product
+                  .querySelector(selectors.discountPercentage)
+                  ?.innerText.trim()
+              : null,
+            discountPrice: selectors.discountPrice
+              ? product.querySelector(selectors.discountPrice)?.innerText.trim()
+              : null,
+            specialDiscountPrice: selectors.specialDiscountPrice
+              ? product
+                  .querySelector(selectors.specialDiscountPrice)
+                  ?.innerText.trim()
+              : null,
+            specialDiscountPercentage: selectors.specialDiscountPercentage
+              ? product
+                  .querySelector(selectors.specialDiscountPercentage)
+                  ?.innerText.trim()
+              : null,
+          };
+
+          products.push(await window.productNormalizer(productData));
+
+          if (DEMO_MODE) {
+            // Remove the highlight after processing
+            product.style.border = "";
+            await new Promise((resolve) => setTimeout(resolve, 600)); // Delay for demo effect // Delay before moving to the next product
+          }
         }
-
-        // We have a `finalPrice` field, this is the final price; the one is displayed on the store.
-        // Also, we have the `discountPercentage` and `discountPrice`;
-        // this means a store can display both or just one of them, so if we have both is nice, but if not,
-        // we should calculate the other one based on the final price,
-        // this is the same to `specialDiscountPrice` and `specialDiscountPercentage`.
-        const productData = {
-          title: product.querySelector(selectors.title)?.innerText.trim() || null,
-          image: selectors.image ? product.querySelector(selectors.image)?.getAttribute('src') || null : null,
-          link: selectors.link && product.querySelector(selectors.link)?.getAttribute('href') ? baseUrl + product.querySelector(selectors.link).getAttribute('href') : null,
-          finalPrice: product.querySelector(selectors.price)?.innerText.trim() || null,
-          discountPercentage: selectors.discountPercentage ? product.querySelector(selectors.discountPercentage)?.innerText.trim() : null,
-          discountPrice: selectors.discountPrice ? product.querySelector(selectors.discountPrice)?.innerText.trim() : null,
-          specialDiscountPrice: selectors.specialDiscountPrice ? product.querySelector(selectors.specialDiscountPrice)?.innerText.trim() : null,
-          specialDiscountPercentage: selectors.specialDiscountPercentage ? product.querySelector(selectors.specialDiscountPercentage)?.innerText.trim() : null,
-        };
-
-        products.push(await window.productNormalizer(productData));
-
-        if (DEMO_MODE) {
-          // Remove the highlight after processing
-          product.style.border = '';
-          await new Promise(resolve => setTimeout(resolve, 600)); // Delay for demo effect // Delay before moving to the next product
-        }
-      }
-      return products;
-    }, this.config.selectors, this.config.baseUrl, DEMO_MODE);
+        return products;
+      },
+      this.config.selectors,
+      this.config.baseUrl,
+      DEMO_MODE,
+    );
   }
 
   /**
@@ -256,23 +346,23 @@ class BaseScraper {
    * @returns {Object} Scraped product with normalized prices.
    */
   async normalizeProduct(product) {
-    const delimiterChar = '-';
+    const delimiterChar = "-";
     const delimiterLength = 80;
     const delimiter = delimiterChar.repeat(delimiterLength);
 
     console.log(delimiter);
-    console.log(chalk.yellow('🔧 Normalizing product...'));
+    console.log(chalk.yellow("🔧 Normalizing product..."));
 
     const calculatedData = calculatePriceAndDiscounts(product);
 
     logProductData({
       title: product.title,
-      ...calculatedData
+      ...calculatedData,
     });
     console.log(delimiter);
 
     if (DEMO_MODE) await sleep(DEMO_TIMING);
-    let {discountPercentage, specialDiscountPercentage} = calculatedData;
+    let { discountPercentage, specialDiscountPercentage } = calculatedData;
 
     return {
       title: product.title,
@@ -292,12 +382,16 @@ class BaseScraper {
    */
   async saveResults(dir, categoryName, products) {
     try {
-      const dateFolder = new Date().toLocaleDateString('en-GB').split('/').reverse().join('-'); // "31-12-2024"
+      const dateFolder = new Date()
+        .toLocaleDateString("en-GB")
+        .split("/")
+        .reverse()
+        .join("-"); // "31-12-2024"
       const outputDir = join(dir, dateFolder);
       const jsonPath = join(outputDir, `${categoryName}-results.json`);
       const csvPath = join(outputDir, `${categoryName}-results.csv`);
 
-      mkdirSync(outputDir, {recursive: true});
+      mkdirSync(outputDir, { recursive: true });
 
       await saveAsJSON(jsonPath, products);
       console.log(chalk.blue(`[INFO] Saved results as JSON: ${jsonPath}`));
@@ -305,7 +399,9 @@ class BaseScraper {
       await saveAsCSV(csvPath, products);
       console.log(chalk.blue(`[INFO] Saved results as CSV: ${csvPath}`));
     } catch (error) {
-      console.error(chalk.red(`[ERROR] Failed to save results: ${error.message}`));
+      console.error(
+        chalk.red(`[ERROR] Failed to save results: ${error.message}`),
+      );
     }
   }
 
@@ -320,10 +416,10 @@ class BaseScraper {
   async interceptRequests(page) {
     await page.setRequestInterception(true);
 
-    page.on('request', (req) => {
+    page.on("request", (req) => {
       const url = req.url();
 
-      if (url.includes('www.googletagmanager.com')) {
+      if (url.includes("www.googletagmanager.com")) {
         console.log(`Blocking request to: ${url}`);
         req.abort();
       } else {

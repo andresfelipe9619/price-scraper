@@ -1,5 +1,9 @@
-const chalk = require('chalk');
-const {normalizePrice, normalizePriceAndDiscount, pick} = require('../../utils');
+const chalk = require("chalk");
+const {
+  normalizePrice,
+  normalizePriceAndDiscount,
+  pick,
+} = require("../../utils");
 
 /**
  * Calculates the original price, final price, discount percentage, and special discount.
@@ -14,20 +18,21 @@ const {normalizePrice, normalizePriceAndDiscount, pick} = require('../../utils')
  * @returns {Object} An object containing calculated price details.
  */
 function calculatePriceAndDiscounts(product) {
-  console.log(chalk.blue.bold('\n[INFO] Calculating Price and Discounts...'));
-  console.log('📊 Price data:', JSON.stringify(pick(product, ["finalPrice", "discountPrice"])));
+  console.log(chalk.blue.bold("\n[INFO] Calculating Price and Discounts..."));
+  console.log(
+    "📊 Price data:",
+    JSON.stringify(pick(product, ["finalPrice", "discountPrice"])),
+  );
 
   // Normalize inputs
   const finalPrice = normalizePrice(product.finalPrice);
   const discountPrice = normalizePrice(product.discountPrice);
   const specialDiscountPrice = normalizePrice(product.specialDiscountPrice);
-  const {
-    percentage: discountPercentage,
-    amount: discountAmount
-  } = normalizePriceAndDiscount(product.discountPercentage);
+  const { percentage: discountPercentage, amount: discountAmount } =
+    normalizePriceAndDiscount(product.discountPercentage);
   const {
     percentage: specialDiscountPercentage,
-    amount: specialDiscountAmount
+    amount: specialDiscountAmount,
   } = normalizePriceAndDiscount(product.specialDiscountPercentage);
 
   let originalPrice = discountPrice || discountAmount || finalPrice; // Start assuming discountPrice is the original
@@ -38,24 +43,31 @@ function calculatePriceAndDiscounts(product) {
   if (!discountPrice && discountPercentage) {
     originalPrice = finalPrice / (1 - discountPercentage / 100);
   } else if (discountPrice && !discountPercentage) {
-    computedDiscountPercentage = ((discountPrice - finalPrice) / discountPrice) * 100;
+    computedDiscountPercentage =
+      ((discountPrice - finalPrice) / discountPrice) * 100;
   }
 
   let specialPrice = specialDiscountPrice || specialDiscountAmount;
   // Infer missing values for special discount
   if (!specialPrice && specialDiscountPercentage) {
-    computedSpecialDiscountPercentage = ((originalPrice - finalPrice) / originalPrice) * 100;
+    computedSpecialDiscountPercentage =
+      ((originalPrice - finalPrice) / originalPrice) * 100;
   } else if (specialPrice && !specialDiscountPercentage) {
-    computedSpecialDiscountPercentage = ((originalPrice - specialPrice) / originalPrice) * 100;
+    computedSpecialDiscountPercentage =
+      ((originalPrice - specialPrice) / originalPrice) * 100;
   }
 
   return {
     originalPrice: originalPrice.toFixed(2),
     finalPrice: finalPrice.toFixed(2),
     specialDiscountPrice: specialPrice ? specialPrice.toFixed(2) : null,
-    discountPercentage: computedDiscountPercentage ? computedDiscountPercentage.toFixed(2) : null,
-    specialDiscountPercentage: computedSpecialDiscountPercentage ? computedSpecialDiscountPercentage.toFixed(2) : null
+    discountPercentage: computedDiscountPercentage
+      ? computedDiscountPercentage.toFixed(2)
+      : null,
+    specialDiscountPercentage: computedSpecialDiscountPercentage
+      ? computedSpecialDiscountPercentage.toFixed(2)
+      : null,
   };
 }
 
-module.exports = {calculatePriceAndDiscounts};
+module.exports = { calculatePriceAndDiscounts };
