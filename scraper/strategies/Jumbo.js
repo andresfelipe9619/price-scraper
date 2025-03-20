@@ -16,7 +16,7 @@ class JumboScraper extends BaseScraper {
         productCard: 'section.vtex-product-summary-2-x-container',
         title: '.vtex-product-summary-2-x-productNameContainer',
         price: '.tiendasjumboqaio-jumbo-minicart-2-x-price',
-        specialPrice: ".tiendasjumboqaio-jumbo-minicart-2-x-price",
+        specialDiscountPrice: ".tiendasjumboqaio-jumbo-minicart-2-x-price",
         discount: ".tiendasjumboqaio-jumbo-minicart-2-x-containerPercentageFlag",
         image: 'img.vtex-product-summary-2-x-imageNormal',
         link: 'a.vtex-product-summary-2-x-clearLink',

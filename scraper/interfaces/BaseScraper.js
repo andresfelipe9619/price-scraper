@@ -1,4 +1,4 @@
-/**
+/****
  * BaseScraper - A generic web scraper for extracting product data across multiple categories.
  * Handles pagination, product extraction, and saving results in multiple formats.
  */
@@ -12,6 +12,30 @@ const {sleep, formatPercentage} = require("../../utils");
 const DEMO_MODE = process.env.DEMO_MODE === 'true';
 const DEMO_TIMING = 300;
 const FIRST_LOAD_WAIT_TIME = 2000;
+
+function logProductData({
+                          title,
+                          finalPrice,
+                          originalPrice,
+                          discountPercentage,
+                          specialDiscountPrice,
+                          specialDiscountPercentage
+                        }) {
+  console.log(chalk.magenta('\n[PRODUCT] Processed product:'), chalk.yellow(title || 'Unknown'));
+  console.log(chalk.cyan(`  💲 Final Price: ${chalk.yellow(finalPrice)}`));
+  console.log(chalk.cyan(`  🏷️ Original Price: ${chalk.yellow(originalPrice)}`));
+  console.log(chalk.cyan(`  📉 Discount: ${chalk.yellow(discountPercentage || '0')}%`));
+  if (specialDiscountPrice) {
+    console.log(
+        chalk.cyan(
+            `  ✨ Special Discount: ${chalk.yellow(
+                specialDiscountPercentage || '0'
+            )}%`
+        )
+    );
+  }
+}
+
 
 /**
  * Configuration object for the web scraper.
@@ -27,11 +51,13 @@ const FIRST_LOAD_WAIT_TIME = 2000;
  * @property {string} selectors.productCard - Selector for the product card container.
  * @property {string} selectors.title - Selector for the product title.
  * @property {string} selectors.price - Selector for the product price.
- * @property {string} selectors.specialPrice - Selector for the special/discounted price.
- * @property {string} selectors.discount - Selector for the discount badge.
+ * @property {string} selectors.specialDiscountPrice - Selector for the special/discounted price.
+ * @property {string} selectors.discountPercentage - Selector for the discount percentage.
+ * @property {string} selectors.discountPrice - Selector for the final price after applying the discount.
  * @property {string} selectors.image - Selector for the product image.
  * @property {string} selectors.link - Selector for the product link.
  * @property {string} selectors.nextPage - Selector for the next page button.
+ * @property {string} selectors.specialDiscountPercentage - Selector for the special discount percentage.
  */
 
 class BaseScraper {
@@ -69,7 +95,7 @@ class BaseScraper {
         await sleep(FIRST_LOAD_WAIT_TIME);
 
         try {
-          await page.waitForSelector(this.config.selectors.productCard, {timeout: 5000});
+          await page.waitForSelector(this.config.selectors.productCard, {timeout: FIRST_LOAD_WAIT_TIME * 2});
           console.log(chalk.green(`Page #${pageIndex} loaded successfully!`));
         } catch (error) {
           console.log(chalk.red.bold(`[ERROR] Failed to load products on page #${pageIndex}: ${error.message}`));
@@ -184,13 +210,20 @@ class BaseScraper {
           await new Promise(resolve => setTimeout(resolve, 600)); // Delay for demo effect
         }
 
+        // We have a `finalPrice` field, this is the final price; the one is displayed on the store.
+        // Also, we have the `discountPercentage` and `discountPrice`;
+        // this means a store can display both or just one of them, so if we have both is nice, but if not,
+        // we should calculate the other one based on the final price,
+        // this is the same to `specialDiscountPrice` and `specialDiscountPercentage`.
         const productData = {
           title: product.querySelector(selectors.title)?.innerText.trim() || null,
-          price: product.querySelector(selectors.price)?.innerText.trim() || null,
-          discount: selectors.discount ? product.querySelector(selectors.discount)?.innerText.trim() : null,
-          specialPrice: selectors.specialPrice ? product.querySelector(selectors.specialPrice)?.innerText.trim() : null,
-          image: product.querySelector(selectors.image)?.getAttribute('src') || null,
+          image: selectors.image ? product.querySelector(selectors.image)?.getAttribute('src') || null : null,
           link: selectors.link && product.querySelector(selectors.link)?.getAttribute('href') ? baseUrl + product.querySelector(selectors.link).getAttribute('href') : null,
+          finalPrice: product.querySelector(selectors.price)?.innerText.trim() || null,
+          discountPercentage: selectors.discountPercentage ? product.querySelector(selectors.discountPercentage)?.innerText.trim() : null,
+          discountPrice: selectors.discountPrice ? product.querySelector(selectors.discountPrice)?.innerText.trim() : null,
+          specialDiscountPrice: selectors.specialDiscountPrice ? product.querySelector(selectors.specialDiscountPrice)?.innerText.trim() : null,
+          specialDiscountPercentage: selectors.specialDiscountPercentage ? product.querySelector(selectors.specialDiscountPercentage)?.innerText.trim() : null,
         };
 
         products.push(await window.productNormalizer(productData));
@@ -217,41 +250,25 @@ class BaseScraper {
 
     console.log(delimiter);
     console.log(chalk.yellow('🔧 Normalizing product...'));
-    let {title, image, price, discount, specialPrice: special, link} = product;
 
-    let {
-      finalPrice,
-      specialPrice,
-      realPrice,
-      discountPercentage,
-      specialDiscountPercentage,
-    } = calculatePriceAndDiscounts(price, special, discount);
+    const calculatedData = calculatePriceAndDiscounts(product);
 
-    console.log(chalk.magenta('\n🛍️ [PRODUCT] Processed product:'), chalk.yellow(title || 'Unknown'));
-    console.log(chalk.cyan(`  💲 Final Price: ${chalk.yellow(finalPrice)}`));
-    console.log(chalk.cyan(`  🏷️ Real Price: ${chalk.yellow(realPrice)}`));
-    console.log(chalk.cyan(`  📉 Discount: ${chalk.yellow(discountPercentage || '0')}%`));
-    if (special)
-      console.log(
-          chalk.cyan(
-              `  ✨ Special Discount: ${chalk.yellow(
-                  specialDiscountPercentage || '0'
-              )}%`
-          )
-      );
+    logProductData({
+      title: product.title,
+      ...calculatedData
+    });
     console.log(delimiter);
 
     if (DEMO_MODE) await sleep(DEMO_TIMING);
+    let {discountPercentage, specialDiscountPercentage} = calculatedData;
 
     return {
-      title,
-      image,
-      link,
-      specialPrice,
-      realPrice,
-      price: finalPrice,
-      specialDiscount: formatPercentage(specialDiscountPercentage),
-      discount: formatPercentage(discountPercentage),
+      title: product.title,
+      image: product.image,
+      link: product.link,
+      ...calculatedData,
+      discountPercentage: formatPercentage(discountPercentage),
+      specialDiscountPercentage: formatPercentage(specialDiscountPercentage),
     };
   }
 
@@ -262,14 +279,22 @@ class BaseScraper {
    * @param {Array} products - List of scraped products.
    */
   async saveResults(dir, categoryName, products) {
-    const jsonPath = join(dir, `${categoryName}-results.json`);
-    const csvPath = join(dir, `${categoryName}-results.csv`);
+    try {
+      const dateFolder = new Date().toLocaleDateString('en-GB').split('/').reverse().join('-'); // "31-12-2024"
+      const outputDir = join(dir, dateFolder);
+      const jsonPath = join(outputDir, `${categoryName}-results.json`);
+      const csvPath = join(outputDir, `${categoryName}-results.csv`);
 
-    await saveAsJSON(jsonPath, products);
-    console.log(chalk.blue(`[INFO] Saved results as JSON: ${jsonPath}`));
+      mkdirSync(outputDir, {recursive: true});
 
-    await saveAsCSV(csvPath, products);
-    console.log(chalk.blue(`[INFO] Saved results as CSV: ${csvPath}`));
+      await saveAsJSON(jsonPath, products);
+      console.log(chalk.blue(`[INFO] Saved results as JSON: ${jsonPath}`));
+
+      await saveAsCSV(csvPath, products);
+      console.log(chalk.blue(`[INFO] Saved results as CSV: ${csvPath}`));
+    } catch (error) {
+      console.error(chalk.red(`[ERROR] Failed to save results: ${error.message}`));
+    }
   }
 
   /**

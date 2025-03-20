@@ -15,7 +15,7 @@ class ClaroScraper extends BaseScraper {
         productCard: '.equipoElement',
         title: ".container-name--red > p",
         price: ".span-pnow1--red",
-        specialPrice: ".span-pbefore1--red",
+        specialDiscountPrice: ".span-pbefore1--red",
         discount: null,
         image: 'img.img-product',
         link: null, //TODO: Need to build the link dynamically, maybe using slugify?

@@ -15,7 +15,7 @@ class MakroScraper extends BaseScraper {
         productCard: '.card-product-vertical',
         title: '[class^="CardName"]',
         price: '[class^="CardBasePrice"]',
-        specialPrice: null,
+        specialDiscountPrice: null,
         discount: null,
         image: 'img.prod__figure__img',
         link: null,

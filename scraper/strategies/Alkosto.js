@@ -4,7 +4,7 @@ const BaseScraper = require("../interfaces/BaseScraper");
 class AlkostoScraper extends BaseScraper {
   constructor(browser) {
     const config = {
-      maxPages: 20,
+      maxPages: 2,
       baseUrl: "https://www.alkosto.com",
       outputDir: join(__dirname, "../../extracted-data/alkosto"),
       categories: {
@@ -17,8 +17,9 @@ class AlkostoScraper extends BaseScraper {
         productCard: '.ais-InfiniteHits-item',
         title: ".product__item__top__title",
         price: ".price",
-        specialPrice: '.price-contentPlp',
-        discount: '.label-offer',
+        discountPrice: '.product__price--discounts__old',
+        discountPercentage: '.label-offer',
+        specialDiscountPrice: '.price-contentPlp',
         image: '.product__item__information__image > img',
         link: '.product__item__top__link',
       },
