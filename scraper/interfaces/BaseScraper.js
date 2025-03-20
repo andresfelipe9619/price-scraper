@@ -93,6 +93,18 @@ class BaseScraper {
 
         console.log(chalk.yellow(`Waiting for page #${pageIndex} to load...`));
         await sleep(FIRST_LOAD_WAIT_TIME);
+        const modalSelector = this.config.selectors.firstVisitModal
+
+        if (modalSelector) {
+          console.log(chalk.yellow(`Closing first visit modal...`));
+          try {
+            await page.waitForSelector(modalSelector, {timeout: FIRST_LOAD_WAIT_TIME * 2});
+            await page.click(modalSelector + ' button');
+            await sleep(500);
+          } catch (error) {
+            console.log(chalk.red.bold(`[ERROR] Failed to close the first visit modal: ${error.message}`));
+          }
+        }
 
         try {
           await page.waitForSelector(this.config.selectors.productCard, {timeout: FIRST_LOAD_WAIT_TIME * 2});
