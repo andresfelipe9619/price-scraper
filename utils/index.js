@@ -6,9 +6,15 @@
  */
 function normalizePrice(price, defaultPrice = "$0") {
   try {
-    return parseFloat(clean(price || defaultPrice).replace(/[$,\s]/g, '').replace(/\./g, '')) || 0;
+    return (
+      parseFloat(
+        clean(price || defaultPrice)
+          .replace(/[$,\s]/g, "")
+          .replace(/\./g, ""),
+      ) || 0
+    );
   } catch (error) {
-    console.error('Error normalizing price:', error);
+    console.error("Error normalizing price:", error);
     return 0;
   }
 }
@@ -31,13 +37,13 @@ function normalizeDiscount(discount) {
  */
 function normalizePriceAndDiscount(discount) {
   const cleaned = clean(discount);
-  if (!cleaned) return {percentage: 0, amount: 0};
+  if (!cleaned) return { percentage: 0, amount: 0 };
 
   const percentage = normalizeDiscount(cleaned);
   const amountMatch = cleaned.match(/\$\s?([\d.,]+)/);
   const amount = normalizePrice(amountMatch ? amountMatch[1] : "0");
 
-  return {percentage, amount};
+  return { percentage, amount };
 }
 
 /**
@@ -46,7 +52,7 @@ function normalizePriceAndDiscount(discount) {
  * @returns {string} The cleaned string.
  */
 function clean(str) {
-  return str ? str.replace(/\n/g, '').replace(/\s+/g, ' ').trim() : '';
+  return str ? str.replace(/\n/g, "").replace(/\s+/g, " ").trim() : "";
 }
 
 /**
@@ -56,8 +62,8 @@ function clean(str) {
  * @returns {Array[]} An array of chunks.
  */
 function chunkArray(arr, size) {
-  return Array.from({length: Math.ceil(arr.length / size)}, (_, i) =>
-      arr.slice(i * size, i * size + size)
+  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+    arr.slice(i * size, i * size + size),
   );
 }
 
@@ -67,7 +73,7 @@ function chunkArray(arr, size) {
  * @returns {Promise<void>} A promise that resolves after the specified time.
  */
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -95,14 +101,14 @@ function formatPercentage(value) {
  */
 function slugify(input) {
   return input
-      .toLowerCase() // Convert to lowercase
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/[^a-z0-9-]/g, ''); // Remove any non-alphanumeric characters except hyphens
+    .toLowerCase() // Convert to lowercase
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/[^a-z0-9-]/g, ""); // Remove any non-alphanumeric characters except hyphens
 }
 
 function pick(obj, keys) {
   return keys.reduce((acc, key) => {
-    if (obj.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
       acc[key] = obj[key];
     }
     return acc;
@@ -116,5 +122,5 @@ module.exports = {
   pick,
   chunkArray,
   slugify,
-  formatPercentage
+  formatPercentage,
 };
