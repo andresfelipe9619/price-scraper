@@ -6,7 +6,7 @@
  */
 function normalizePrice(price, defaultPrice = "$0") {
   try {
-    return parseFloat((price || defaultPrice).trim().replace(/[$,\s]/g, '').replace(/\./g, '')) || 0;
+    return parseFloat(clean(price || defaultPrice).replace(/[$,\s]/g, '').replace(/\./g, '')) || 0;
   } catch (error) {
     console.error('Error normalizing price:', error);
     return 0;
@@ -14,24 +14,39 @@ function normalizePrice(price, defaultPrice = "$0") {
 }
 
 /**
+ * Extracts and normalizes a discount percentage from a string.
+ * @param {string} discount - The discount string to normalize.
+ * @returns {number} The discount percentage as a number.
+ */
+function normalizeDiscount(discount) {
+  const cleaned = clean(discount);
+  const percentageMatch = cleaned.match(/(\d+)%/);
+  return percentageMatch ? parseInt(percentageMatch[1], 10) : 0;
+}
+
+/**
  * Normalizes a discount string into percentage and amount values.
  * @param {string} discount - The discount string to normalize.
  * @returns {{percentage: number, amount: number}} An object containing the discount percentage and amount.
  */
-function normalizeDiscount(discount) {
-  if (!discount || discount.trim() === '') return {percentage: 0, amount: 0};
+function normalizePriceAndDiscount(discount) {
+  const cleaned = clean(discount);
+  if (!cleaned) return {percentage: 0, amount: 0};
 
-  const cleaned = discount.replace(/\n/g, '').replace(/\s+/g, ' ').trim();
+  const percentage = normalizeDiscount(cleaned);
+  const amountMatch = cleaned.match(/\$\s?([\d.,]+)/);
+  const amount = normalizePrice(amountMatch ? amountMatch[1] : "0");
 
-  const percentageMatch = cleaned.match(/(\d+)%/);
-  const amountMatch = cleaned.match(/\$\s?(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d*)?)/);
+  return {percentage, amount};
+}
 
-  let amount = amountMatch ? amountMatch[1].replace(/[.,]/g, '') : 0;
-
-  return {
-    percentage: percentageMatch ? parseInt(percentageMatch[1]) : 0,
-    amount: parseFloat(amount)
-  };
+/**
+ * Cleans a string by removing newlines, excessive spaces, and trimming.
+ * @param {string} str - The string to clean.
+ * @returns {string} The cleaned string.
+ */
+function clean(str) {
+  return str ? str.replace(/\n/g, '').replace(/\s+/g, ' ').trim() : '';
 }
 
 /**
@@ -85,10 +100,20 @@ function slugify(input) {
       .replace(/[^a-z0-9-]/g, ''); // Remove any non-alphanumeric characters except hyphens
 }
 
+function pick(obj, keys) {
+  return keys.reduce((acc, key) => {
+    if (obj.hasOwnProperty(key)) {
+      acc[key] = obj[key];
+    }
+    return acc;
+  }, {});
+}
+
 module.exports = {
   normalizePrice,
-  normalizeDiscount,
+  normalizePriceAndDiscount,
   sleep,
+  pick,
   chunkArray,
   slugify,
   formatPercentage
