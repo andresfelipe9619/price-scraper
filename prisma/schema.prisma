@@ -44,7 +44,7 @@ model Image {
 model HistoricalPrice {
   id        Int          @id @default(autoincrement())
   price     Decimal      @default(0)
-  realPrice Decimal      @default(0)
+  originalPrice Decimal      @default(0)
   discount  Decimal      @default(0)
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
