@@ -2,6 +2,5 @@ node_modules/
 *-results.json
 .env
 codealike.json
-.idea
 extracted-data
 all-in

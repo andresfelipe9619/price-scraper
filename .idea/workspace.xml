@@ -1,0 +1,644 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a28c6bbe-d509-42f0-8751-a0e95bf78c10" name="Changes" comment="🚧 Build data merger">
+      <change beforePath="$PROJECT_DIR$/__tests__/scraper.js" beforeDir="false" afterPath="$PROJECT_DIR$/__tests__/scraper.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scraper/strategies/Alkosto.js" beforeDir="false" afterPath="$PROJECT_DIR$/scraper/strategies/Alkosto.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" show_ignored="true">
+    <option name="groupingKeys">
+      <option value="directory" />
+    </option>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="false" />
+    <option name="myAllFileTypesSelected" value="true" />
+    <option name="mySelectedFileTypes">
+      <set />
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;andresfelipe9619&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:andresfelipe9619/price-scraper.git&quot;,
+    &quot;accountId&quot;: &quot;1224175b-8892-4e8f-9125-ff18451ff8fa&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2tW8rx5gpyYKExQ9MbG676w8hsp" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Jest.normalizePrice should convert string price to number.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.normalizePriceAndDiscount should convert string discount to number.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.utils.js.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.Exito.js.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.Merger.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.index.js.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.scraper.js.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;com.github.patou.gitmoji.display-icon&quot;: &quot;emoji&quot;,
+    &quot;com.github.patou.gitmoji.text-after-unicode&quot;: &quot; &quot;,
+    &quot;com.github.patou.gitmoji.use-unicode&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/suarezdev96/Desktop/Scraper/price-scraper&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs.jest.jest_package&quot;: &quot;/Users/suarezdev96/Desktop/Scraper/price-scraper/node_modules/jest&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
+    &quot;npm.demo.executor&quot;: &quot;Run&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/suarezdev96/Desktop/Scraper/price-scraper/node_modules/prettier&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/suarezdev96/Applications/WebStorm.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/merger" />
+      <recent name="$PROJECT_DIR$/extracted-data" />
+      <recent name="$PROJECT_DIR$/__tests__" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Node.js.scraper.js">
+    <configuration name="normalizePrice should convert string price to number" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/__tests__/utils.js" />
+      <test-names>
+        <test-name value="normalizePrice should convert string price to number" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="normalizePriceAndDiscount should convert string discount to number" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/__tests__/utils.js" />
+      <test-names>
+        <test-name value="normalizePriceAndDiscount should convert string discount to number" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Merger" type="NodeJSConfigurationType" path-to-js-file="$PROJECT_DIR$/merger/index.js" working-dir="$PROJECT_DIR$/extracted-data">
+      <method v="2" />
+    </configuration>
+    <configuration name="scraper.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="scraper.js" working-dir="$PROJECT_DIR$/__tests__">
+      <method v="2" />
+    </configuration>
+    <configuration name="demo" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="demo" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Node.js.scraper.js" />
+        <item itemvalue="npm.demo" />
+        <item itemvalue="Jest.normalizePriceAndDiscount should convert string discount to number" />
+        <item itemvalue="Jest.normalizePrice should convert string price to number" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.25659.40" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a28c6bbe-d509-42f0-8751-a0e95bf78c10" name="Changes" comment="" />
+      <created>1740456675990</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1740456675990</updated>
+      <workItem from="1740456677131" duration="443000" />
+      <workItem from="1740486603289" duration="1367000" />
+      <workItem from="1740517853377" duration="760000" />
+      <workItem from="1740531528942" duration="22247000" />
+      <workItem from="1740623040797" duration="9462000" />
+      <workItem from="1740656730491" duration="162000" />
+      <workItem from="1740685870647" duration="3096000" />
+      <workItem from="1740706819711" duration="2285000" />
+      <workItem from="1740746928246" duration="598000" />
+      <workItem from="1740748704847" duration="15772000" />
+      <workItem from="1740800781451" duration="3697000" />
+      <workItem from="1740830503455" duration="13232000" />
+      <workItem from="1740974363382" duration="2006000" />
+      <workItem from="1741005734662" duration="5784000" />
+      <workItem from="1741056248887" duration="1739000" />
+      <workItem from="1741091781366" duration="11798000" />
+      <workItem from="1741186269626" duration="10453000" />
+      <workItem from="1741403520344" duration="450000" />
+      <workItem from="1741434325989" duration="1807000" />
+      <workItem from="1741456497483" duration="1632000" />
+      <workItem from="1741464767748" duration="511000" />
+      <workItem from="1741521988170" duration="5195000" />
+      <workItem from="1741600457666" duration="122000" />
+      <workItem from="1741600588468" duration="35000" />
+      <workItem from="1741600630426" duration="3507000" />
+      <workItem from="1741794086743" duration="9800000" />
+      <workItem from="1741826300936" duration="197000" />
+      <workItem from="1741951896539" duration="6777000" />
+      <workItem from="1742070623797" duration="1188000" />
+      <workItem from="1742217760768" duration="1363000" />
+      <workItem from="1742341134345" duration="2212000" />
+      <workItem from="1742343788689" duration="5607000" />
+      <workItem from="1742386278150" duration="1154000" />
+      <workItem from="1742470110189" duration="19133000" />
+      <workItem from="1742499462722" duration="5714000" />
+      <workItem from="1742525069860" duration="2661000" />
+      <workItem from="1742557155950" duration="6878000" />
+    </task>
+    <task id="LOCAL-00015" summary="🚧 Add packages for using AI and also for packaging the script">
+      <option name="closed" value="true" />
+      <created>1740801129373</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1740801129373</updated>
+    </task>
+    <task id="LOCAL-00016" summary="🔊 Add logs for better DX">
+      <option name="closed" value="true" />
+      <created>1740801171195</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1740801171195</updated>
+    </task>
+    <task id="LOCAL-00017" summary="🔇 Remove extra logs">
+      <option name="closed" value="true" />
+      <created>1740801197357</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1740801197357</updated>
+    </task>
+    <task id="LOCAL-00018" summary="♻️ Create a new BaseScraper interface for better organization and scalability">
+      <option name="closed" value="true" />
+      <created>1740801263557</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1740801263557</updated>
+    </task>
+    <task id="LOCAL-00019" summary="🎨 Improve the structure of code, better documentation and maintainability">
+      <option name="closed" value="true" />
+      <created>1740834664101</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1740834664101</updated>
+    </task>
+    <task id="LOCAL-00020" summary="✅ Add Jest and create some tests">
+      <option name="closed" value="true" />
+      <created>1740835892291</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1740835892291</updated>
+    </task>
+    <task id="LOCAL-00021" summary="🎨 Improve documentation and code">
+      <option name="closed" value="true" />
+      <created>1740835919505</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1740835919505</updated>
+    </task>
+    <task id="LOCAL-00022" summary="📝 Add more documentation">
+      <option name="closed" value="true" />
+      <created>1740836195667</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1740836195667</updated>
+    </task>
+    <task id="LOCAL-00023" summary="📝 Fix params">
+      <option name="closed" value="true" />
+      <created>1740836266588</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1740836266588</updated>
+    </task>
+    <task id="LOCAL-00024" summary="✨ Create Falabella scraper">
+      <option name="closed" value="true" />
+      <created>1740839844500</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1740839844500</updated>
+    </task>
+    <task id="LOCAL-00025" summary="🔥 Remove unused code">
+      <option name="closed" value="true" />
+      <created>1740841138063</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1740841138063</updated>
+    </task>
+    <task id="LOCAL-00026" summary="✨ Add iShop scraper">
+      <option name="closed" value="true" />
+      <created>1740846015746</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1740846015746</updated>
+    </task>
+    <task id="LOCAL-00027" summary="🎨 Organize strategies code">
+      <option name="closed" value="true" />
+      <created>1740846037213</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1740846037213</updated>
+    </task>
+    <task id="LOCAL-00028" summary="📝 Add documentation to the BaseScraper">
+      <option name="closed" value="true" />
+      <created>1740846069233</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1740846069233</updated>
+    </task>
+    <task id="LOCAL-00029" summary="✨ Add Movistar scraper">
+      <option name="closed" value="true" />
+      <created>1741006036396</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1741006036396</updated>
+    </task>
+    <task id="LOCAL-00030" summary="🐛 Fix minor issues ands improve compatibility">
+      <option name="closed" value="true" />
+      <created>1741006163601</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1741006163601</updated>
+    </task>
+    <task id="LOCAL-00031" summary="🚧 Create the base structure for the clustering algorithm">
+      <option name="closed" value="true" />
+      <created>1741057247202</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1741057247202</updated>
+    </task>
+    <task id="LOCAL-00032" summary="🏷️ Improve types">
+      <option name="closed" value="true" />
+      <created>1741057864662</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1741057864662</updated>
+    </task>
+    <task id="LOCAL-00033" summary="✨ Add Claro scraper">
+      <option name="closed" value="true" />
+      <created>1741095306313</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1741095306313</updated>
+    </task>
+    <task id="LOCAL-00034" summary="✨ Add MacCenter and Tigo scrapers">
+      <option name="closed" value="true" />
+      <created>1741105012599</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1741105012599</updated>
+    </task>
+    <task id="LOCAL-00035" summary="✨ Create a merger for the extracted data">
+      <option name="closed" value="true" />
+      <created>1741105065583</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1741105065583</updated>
+    </task>
+    <task id="LOCAL-00036" summary="✨ Add Jumbo scraper">
+      <option name="closed" value="true" />
+      <created>1741200329043</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1741200329043</updated>
+    </task>
+    <task id="LOCAL-00037" summary="♻️ Improve next page selection and add a new config for auto scrolling">
+      <option name="closed" value="true" />
+      <created>1741200412945</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1741200412945</updated>
+    </task>
+    <task id="LOCAL-00038" summary="🚧 Add base structure for the rest of the scrapers">
+      <option name="closed" value="true" />
+      <created>1741200551844</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1741200551844</updated>
+    </task>
+    <task id="LOCAL-00039" summary="🚧 Add Olimpica but needs more improvements, mostly on the discount and next page selectors">
+      <option name="closed" value="true" />
+      <created>1741533683956</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1741533683956</updated>
+    </task>
+    <task id="LOCAL-00040" summary="🚧 Create the full list of desirable scrapers">
+      <option name="closed" value="true" />
+      <created>1741535043307</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1741535043307</updated>
+    </task>
+    <task id="LOCAL-00041" summary="🚧 Create the full list of desirable scrapers">
+      <option name="closed" value="true" />
+      <created>1741600828536</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1741600828536</updated>
+    </task>
+    <task id="LOCAL-00042" summary="✨ Create DEMO_MODE for showing logs slowly, perfect for demos and videos">
+      <option name="closed" value="true" />
+      <created>1741810558212</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1741810558212</updated>
+    </task>
+    <task id="LOCAL-00043" summary="🐛 Fix minor issues">
+      <option name="closed" value="true" />
+      <created>1741810928959</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1741810928959</updated>
+    </task>
+    <task id="LOCAL-00044" summary="🎨 Improve structure of code">
+      <option name="closed" value="true" />
+      <created>1741812359939</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1741812359939</updated>
+    </task>
+    <task id="LOCAL-00045" summary="🐛 Use just one env var">
+      <option name="closed" value="true" />
+      <created>1741812542765</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1741812542765</updated>
+    </task>
+    <task id="LOCAL-00046" summary="🔊 Improve logs">
+      <option name="closed" value="true" />
+      <created>1741826451926</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1741826451926</updated>
+    </task>
+    <task id="LOCAL-00047" summary="✨ Create Mercado Libre scraper">
+      <option name="closed" value="true" />
+      <created>1741962317820</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1741962317820</updated>
+    </task>
+    <task id="LOCAL-00048" summary="🚧 Update code">
+      <option name="closed" value="true" />
+      <created>1741962820008</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1741962820008</updated>
+    </task>
+    <task id="LOCAL-00049" summary="🔊 Improve logs">
+      <option name="closed" value="true" />
+      <created>1741964456489</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1741964456489</updated>
+    </task>
+    <task id="LOCAL-00050" summary="♻️ Refactor normalizing functions for better maintainability">
+      <option name="closed" value="true" />
+      <created>1742484175667</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1742484175667</updated>
+    </task>
+    <task id="LOCAL-00051" summary="♻️ Refactor naming of variables and also improve code readability">
+      <option name="closed" value="true" />
+      <created>1742484255848</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1742484255848</updated>
+    </task>
+    <task id="LOCAL-00052" summary="♻️ Update naming in schema">
+      <option name="closed" value="true" />
+      <created>1742484387308</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1742484387308</updated>
+    </task>
+    <task id="LOCAL-00053" summary="✨ Use a new selector `firstVisitModal` for cases when there is a modal covering the full page in the first load">
+      <option name="closed" value="true" />
+      <created>1742498648114</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1742498648114</updated>
+    </task>
+    <task id="LOCAL-00054" summary="📦️ Add ESLint and Prettier">
+      <option name="closed" value="true" />
+      <created>1742499752495</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1742499752495</updated>
+    </task>
+    <task id="LOCAL-00055" summary="🚨 Run linter over the whole project">
+      <option name="closed" value="true" />
+      <created>1742499910507</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1742499910508</updated>
+    </task>
+    <task id="LOCAL-00056" summary="🚨 Run linter over the whole project">
+      <option name="closed" value="true" />
+      <created>1742500906501</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1742500906501</updated>
+    </task>
+    <task id="LOCAL-00057" summary="🎨 Improve selectors">
+      <option name="closed" value="true" />
+      <created>1742503497299</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1742503497299</updated>
+    </task>
+    <task id="LOCAL-00058" summary="🦺 Validate the image and product link if they are full urls or not">
+      <option name="closed" value="true" />
+      <created>1742562798053</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1742562798053</updated>
+    </task>
+    <task id="LOCAL-00059" summary="✨ Improve demo animations, now run over each child instead of just the product container">
+      <option name="closed" value="true" />
+      <created>1742562866786</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1742562866786</updated>
+    </task>
+    <task id="LOCAL-00060" summary="🗃️ Update prisma related code">
+      <option name="closed" value="true" />
+      <created>1742562911949</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1742562911949</updated>
+    </task>
+    <task id="LOCAL-00061" summary="🎨 Improve selectors">
+      <option name="closed" value="true" />
+      <created>1742564093260</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1742564093260</updated>
+    </task>
+    <task id="LOCAL-00062" summary="🙈 Update .gitignore">
+      <option name="closed" value="true" />
+      <created>1742564160254</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1742564160254</updated>
+    </task>
+    <task id="LOCAL-00063" summary="🚧 Build data merger">
+      <option name="closed" value="true" />
+      <created>1742564326305</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1742564326305</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value=" Add base structure for the rest of the scrapers" />
+    <MESSAGE value=" Add Olimpica but needs more improvements, mostly on the discount and next page selectors" />
+    <MESSAGE value=" Create the full list of desirable scrapers" />
+    <MESSAGE value=" Create the full list of desirable scrapers" />
+    <MESSAGE value="✨ Create DEMO_MODE for showing logs slowly, perfect for demos and videos" />
+    <MESSAGE value=" Fix minor issues" />
+    <MESSAGE value=" Improve structure of code" />
+    <MESSAGE value=" Use just one env var" />
+    <MESSAGE value=" Improve logs" />
+    <MESSAGE value="✨ Create Mercado Libre scraper" />
+    <MESSAGE value=" Update code" />
+    <MESSAGE value=" Improve logs" />
+    <MESSAGE value="♻️ Refactor normalizing functions for better maintainability" />
+    <MESSAGE value="♻️ Refactor naming of variables and also improve code readability" />
+    <MESSAGE value="♻️ Update naming in schema" />
+    <MESSAGE value="✨ Use a new selector `firstVisitModal` for cases when there is a modal covering the full page in the first load" />
+    <MESSAGE value="️ Add ESLint and Prettier" />
+    <MESSAGE value=" Run linter over the whole project" />
+    <MESSAGE value=" Improve selectors" />
+    <MESSAGE value=" Validate the image and product link if they are full urls or not" />
+    <MESSAGE value="✨ Improve demo animations, now run over each child instead of just the product container" />
+    <MESSAGE value="️ Update prisma related code" />
+    <MESSAGE value=" Improve selectors" />
+    <MESSAGE value=" Update .gitignore" />
+    <MESSAGE value=" Build data merger" />
+    <option name="LAST_COMMIT_MESSAGE" value=" Build data merger" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
