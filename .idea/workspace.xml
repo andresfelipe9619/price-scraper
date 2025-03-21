@@ -4,9 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a28c6bbe-d509-42f0-8751-a0e95bf78c10" name="Changes" comment="🚧 Build data merger">
+    <list default="true" id="a28c6bbe-d509-42f0-8751-a0e95bf78c10" name="Changes" comment="🚚 Move API related folders to their own folder">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/__tests__/scraper.js" beforeDir="false" afterPath="$PROJECT_DIR$/__tests__/scraper.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/migrations/20220716182408_init/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/20220716182408_init/migration.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/migrations/20220720181615_added_historical_fields/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/20220720181615_added_historical_fields/migration.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/migrations/20220723025413_added_images_schema/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/20220723025413_added_images_schema/migration.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/migrations/migration_lock.toml" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/migration_lock.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/seed.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/seed.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/routes/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/routes/login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/product.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/routes/product.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/routes/user.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scraper/strategies/Alkosto.js" beforeDir="false" afterPath="$PROJECT_DIR$/scraper/strategies/Alkosto.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/product.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/services/product.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,6 +106,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/api" />
       <recent name="$PROJECT_DIR$/merger" />
       <recent name="$PROJECT_DIR$/extracted-data" />
       <recent name="$PROJECT_DIR$/__tests__" />
@@ -198,23 +213,7 @@
       <workItem from="1742470110189" duration="19133000" />
       <workItem from="1742499462722" duration="5714000" />
       <workItem from="1742525069860" duration="2661000" />
-      <workItem from="1742557155950" duration="6878000" />
-    </task>
-    <task id="LOCAL-00015" summary="🚧 Add packages for using AI and also for packaging the script">
-      <option name="closed" value="true" />
-      <created>1740801129373</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1740801129373</updated>
-    </task>
-    <task id="LOCAL-00016" summary="🔊 Add logs for better DX">
-      <option name="closed" value="true" />
-      <created>1740801171195</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1740801171195</updated>
+      <workItem from="1742557155950" duration="9714000" />
     </task>
     <task id="LOCAL-00017" summary="🔇 Remove extra logs">
       <option name="closed" value="true" />
@@ -592,7 +591,23 @@
       <option name="project" value="LOCAL" />
       <updated>1742564326305</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="🔧 Add .idea folder for better project workspace consistency">
+      <option name="closed" value="true" />
+      <created>1742565246750</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1742565246750</updated>
+    </task>
+    <task id="LOCAL-00065" summary="📝 Add documentation">
+      <option name="closed" value="true" />
+      <created>1742567383045</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1742567383046</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -610,9 +625,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value=" Add base structure for the rest of the scrapers" />
-    <MESSAGE value=" Add Olimpica but needs more improvements, mostly on the discount and next page selectors" />
-    <MESSAGE value=" Create the full list of desirable scrapers" />
     <MESSAGE value=" Create the full list of desirable scrapers" />
     <MESSAGE value="✨ Create DEMO_MODE for showing logs slowly, perfect for demos and videos" />
     <MESSAGE value=" Fix minor issues" />
@@ -635,7 +647,10 @@
     <MESSAGE value=" Improve selectors" />
     <MESSAGE value=" Update .gitignore" />
     <MESSAGE value=" Build data merger" />
-    <option name="LAST_COMMIT_MESSAGE" value=" Build data merger" />
+    <MESSAGE value=" Add .idea folder for better project workspace consistency" />
+    <MESSAGE value=" Add documentation" />
+    <MESSAGE value=" Move API related folders to their own folder" />
+    <option name="LAST_COMMIT_MESSAGE" value=" Move API related folders to their own folder" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
