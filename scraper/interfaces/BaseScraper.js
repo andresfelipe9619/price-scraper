@@ -276,7 +276,6 @@ class BaseScraper {
     return page.evaluate(
       async (selectors, baseUrl, DEMO_MODE) => {
         const elements = document.querySelectorAll(selectors.productCard);
-
         const products = [];
 
         function isValidHttpUrl(url) {
@@ -295,11 +294,39 @@ class BaseScraper {
           if (DEMO_MODE) {
             //TODO: Fix Conflict with autoscroll config
             product.scrollIntoView({ behavior: "smooth", block: "center" });
-            // Highlight the current product with a red border
-            product.style.border = "2px solid red";
-            product.style.transition = "border 0.5s ease";
-            await new Promise((resolve) => setTimeout(resolve, 600)); // Delay for demo effect
-          }
+
+            // Create a glowing animation effect
+            const addGlowEffect = (element, color = "cyan") => {
+              if (!element) return;
+              element.style.animation =
+                "glowEffect 1s ease-in-out infinite alternate";
+              element.style.boxShadow = `0 0 10px ${color}`;
+            };
+
+            // Remove the glow effect
+            const removeGlowEffect = (element) => {
+              if (!element) return;
+              element.style.animation = "";
+              element.style.boxShadow = "";
+            };
+
+            // Define elements to highlight
+            const elementsToHighlight = [
+              product,
+              product.querySelector(selectors.title),
+              product.querySelector(selectors.image),
+              product.querySelector(selectors.price),
+              product.querySelector(selectors.discountPrice),
+              product.querySelector(selectors.discountPercentage),
+              product.querySelector(selectors.specialDiscountPrice),
+              product.querySelector(selectors.specialDiscountPercentage),
+            ];
+
+            for (const el of elementsToHighlight) {
+              addGlowEffect(el);
+              await new Promise((resolve) => setTimeout(resolve, 1000)); // Slower glow effect
+              removeGlowEffect(el);
+            }
 
             await new Promise((resolve) => setTimeout(resolve, 400));
           }
@@ -320,22 +347,14 @@ class BaseScraper {
           }
 
           // Also, we have the `discountPercentage` and `discountPrice`;
-          // this means a store can display both or just one of them, so if we have both is nice, but if not,
+          // this means a store can display both or just one of them,
+          // so if we have both is nice, but if not,
           // we should calculate the other one based on the final price,
           // this is the same to `specialDiscountPrice` and `specialDiscountPercentage`.
           const productData = {
-            title:
-              product.querySelector(selectors.title)?.innerText.trim() || null,
-            image: selectors.image
-              ? product.querySelector(selectors.image)?.getAttribute("src") ||
-                null
-              : null,
-            link:
-              selectors.link &&
-              product.querySelector(selectors.link)?.getAttribute("href")
-                ? baseUrl +
-                  product.querySelector(selectors.link).getAttribute("href")
-                : null,
+            title,
+            image,
+            link,
             finalPrice:
               product.querySelector(selectors.price)?.innerText.trim() || null,
             discountPercentage: selectors.discountPercentage
@@ -359,12 +378,6 @@ class BaseScraper {
           };
 
           products.push(await window.productNormalizer(productData));
-
-          if (DEMO_MODE) {
-            // Remove the highlight after processing
-            product.style.border = "";
-            await new Promise((resolve) => setTimeout(resolve, 600)); // Delay for demo effect // Delay before moving to the next product
-          }
         }
         return products;
       },
@@ -399,10 +412,10 @@ class BaseScraper {
     let { discountPercentage, specialDiscountPercentage } = calculatedData;
 
     return {
+      ...calculatedData,
       title: product.title,
       image: product.image,
       link: product.link,
-      ...calculatedData,
       discountPercentage: formatPercentage(discountPercentage),
       specialDiscountPercentage: formatPercentage(specialDiscountPercentage),
     };
