@@ -5,7 +5,12 @@ const { saveAsJSON, saveAsCSV } = require("../scraper/interfaces/Export");
 const inputDir = path.join(__dirname, "../extracted-data");
 const outputDir = path.join(__dirname, "../all-in");
 
-// Helper function to read and parse JSON
+/**
+ * Reads and parses a JSON file.
+ *
+ * @param {string} filePath - The path to the JSON file.
+ * @returns {Array<Object>} Parsed JSON data as an array of objects, or an empty array if an error occurs.
+ */
 function readJsonFile(filePath) {
   try {
     const content = fs.readFileSync(filePath, "utf-8");
@@ -16,7 +21,12 @@ function readJsonFile(filePath) {
   }
 }
 
-// Recursive function to gather product data
+/**
+ * Recursively collects product data from JSON files within category directories.
+ *
+ * @param {string} dir - The root directory containing store and category subdirectories.
+ * @returns {Object<string, Object[]>} An object where keys are category names and values are arrays of product data.
+ */
 function collectDataByCategory(dir) {
   const categories = {};
 
@@ -51,21 +61,28 @@ function collectDataByCategory(dir) {
   return categories;
 }
 
-// Write combined data to files
-function writeOutputFiles(categories) {
+/**
+ * Writes combined product data to JSON and CSV files.
+ *
+ * @param {Object<string, Object[]>} categories - An object mapping category names to arrays of product data.
+ * @returns {Promise<void>} Resolves once all files have been written.
+ */
+async function writeOutputFiles(categories) {
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
 
-  Object.entries(categories).forEach(async ([category, products]) => {
+  for (const [category, products] of Object.entries(categories)) {
     const outputFile = path.join(outputDir, category);
     await saveAsJSON(outputFile, products);
     await saveAsCSV(outputFile, products);
     console.log(`✅ Combined data for ${category} saved to ${outputFile}`);
-  });
+  }
 }
 
-// Main function to run the script
+/**
+ * Main function to scan directories, collect product data, and write output files.
+ */
 function main() {
   console.log("🔍 Scanning directory and collecting product data...");
   const categories = collectDataByCategory(inputDir);
@@ -73,6 +90,5 @@ function main() {
   console.log("🚀 Data aggregation complete!");
 }
 
+// Execute the script
 main();
-
-// Let me know if you’d like me to add CSV handling or tweak anything else! 🚀

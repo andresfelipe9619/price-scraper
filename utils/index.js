@@ -106,6 +106,13 @@ function slugify(input) {
     .replace(/[^a-z0-9-]/g, ""); // Remove any non-alphanumeric characters except hyphens
 }
 
+/**
+ * Picks specified keys from an object and returns a new object with only those keys.
+ *
+ * @param {Object} obj - The source object from which keys will be picked.
+ * @param {string[]} keys - The list of keys to pick from the object.
+ * @returns {Object} A new object containing only the picked keys.
+ */
 function pick(obj, keys) {
   return keys.reduce((acc, key) => {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
