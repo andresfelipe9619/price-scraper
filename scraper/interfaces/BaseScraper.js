@@ -278,6 +278,19 @@ class BaseScraper {
         const elements = document.querySelectorAll(selectors.productCard);
 
         const products = [];
+
+        function isValidHttpUrl(url) {
+          try {
+            const parsedUrl = new URL(url);
+            return (
+              parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:"
+            );
+          } catch (err) {
+            console.error(err);
+            return false; // Invalid URL
+          }
+        }
+
         for (const product of elements) {
           if (DEMO_MODE) {
             //TODO: Fix Conflict with autoscroll config
@@ -288,7 +301,24 @@ class BaseScraper {
             await new Promise((resolve) => setTimeout(resolve, 600)); // Delay for demo effect
           }
 
-          // We have a `finalPrice` field, this is the final price; the one is displayed on the store.
+            await new Promise((resolve) => setTimeout(resolve, 400));
+          }
+
+          let title =
+            product.querySelector(selectors.title)?.innerText?.trim() || null;
+
+          let image =
+            product.querySelector(selectors.image)?.getAttribute("src") || null;
+          if (image && !isValidHttpUrl(image)) {
+            image = `${baseUrl}${image}`;
+          }
+
+          let link =
+            product.querySelector(selectors.link)?.getAttribute("href") || null;
+          if (link && !isValidHttpUrl(link)) {
+            link = `${baseUrl}${link}`;
+          }
+
           // Also, we have the `discountPercentage` and `discountPrice`;
           // this means a store can display both or just one of them, so if we have both is nice, but if not,
           // we should calculate the other one based on the final price,
