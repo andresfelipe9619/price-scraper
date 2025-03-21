@@ -1,14 +1,14 @@
-const fs = require('fs');
-const path = require('path');
-const {saveAsJSON, saveAsCSV} = require("../scraper/interfaces/Export");
+const fs = require("fs");
+const path = require("path");
+const { saveAsJSON, saveAsCSV } = require("../scraper/interfaces/Export");
 
-const inputDir = path.join(__dirname, '../extracted-data');
-const outputDir = path.join(__dirname, '../all-in');
+const inputDir = path.join(__dirname, "../extracted-data");
+const outputDir = path.join(__dirname, "../all-in");
 
 // Helper function to read and parse JSON
 function readJsonFile(filePath) {
   try {
-    const content = fs.readFileSync(filePath, 'utf-8');
+    const content = fs.readFileSync(filePath, "utf-8");
     return JSON.parse(content);
   } catch (err) {
     console.error(`Error reading ${filePath}:`, err);
@@ -28,7 +28,7 @@ function collectDataByCategory(dir) {
         const categoryPath = path.join(storePath, category);
 
         if (fs.statSync(categoryPath).isDirectory()) {
-          const jsonFile = path.join(categoryPath, category + '-results.json');
+          const jsonFile = path.join(categoryPath, category + "-results.json");
 
           if (fs.existsSync(jsonFile)) {
             const products = readJsonFile(jsonFile);
@@ -54,7 +54,7 @@ function collectDataByCategory(dir) {
 // Write combined data to files
 function writeOutputFiles(categories) {
   if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, {recursive: true});
+    fs.mkdirSync(outputDir, { recursive: true });
   }
 
   Object.entries(categories).forEach(async ([category, products]) => {
@@ -67,10 +67,10 @@ function writeOutputFiles(categories) {
 
 // Main function to run the script
 function main() {
-  console.log('🔍 Scanning directory and collecting product data...');
+  console.log("🔍 Scanning directory and collecting product data...");
   const categories = collectDataByCategory(inputDir);
   writeOutputFiles(categories);
-  console.log('🚀 Data aggregation complete!');
+  console.log("🚀 Data aggregation complete!");
 }
 
 main();
