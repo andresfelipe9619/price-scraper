@@ -8,40 +8,15 @@ const { mkdirSync, existsSync } = require("node:fs");
 const { join } = require("node:path");
 const { calculatePriceAndDiscounts } = require("./Price");
 const { sleep, formatPercentage } = require("../../utils");
+const {
+  logProductData,
+  logErrorLoadingPageProducts,
+  logNextPageResult,
+} = require("../../utils/logger");
 
 const DEMO_MODE = process.env.DEMO_MODE === "true";
 const DEMO_TIMING = 300;
 const FIRST_LOAD_WAIT_TIME = 2000;
-
-function logProductData({
-  title,
-  finalPrice,
-  originalPrice,
-  discountPercentage,
-  specialDiscountPrice,
-  specialDiscountPercentage,
-}) {
-  console.log(
-    chalk.magenta("\n[PRODUCT] Processed product:"),
-    chalk.yellow(title || "Unknown"),
-  );
-  console.log(chalk.cyan(`  💲 Final Price: ${chalk.yellow(finalPrice)}`));
-  console.log(
-    chalk.cyan(`  🏷️ Original Price: ${chalk.yellow(originalPrice)}`),
-  );
-  console.log(
-    chalk.cyan(`  📉 Discount: ${chalk.yellow(discountPercentage || "0")}%`),
-  );
-  if (specialDiscountPrice) {
-    console.log(
-      chalk.cyan(
-        `  ✨ Special Discount: ${chalk.yellow(
-          specialDiscountPercentage || "0",
-        )}%`,
-      ),
-    );
-  }
-}
 
 /**
  * Configuration object for the web scraper.
@@ -131,16 +106,7 @@ class BaseScraper {
           });
           console.log(chalk.green(`Page #${pageIndex} loaded successfully!`));
         } catch (error) {
-          console.log(
-            chalk.red.bold(
-              `[ERROR] Failed to load products on page #${pageIndex}: ${error.message}`,
-            ),
-          );
-          console.log(
-            chalk.yellow.bold(
-              `[INFO] Saving the collected products so far for category: ${categoryName}`,
-            ),
-          );
+          logErrorLoadingPageProducts(pageIndex, categoryName, error);
           break; // Exit the loop but continue to save results
         }
 
@@ -207,20 +173,7 @@ class BaseScraper {
         selectors.nextPage,
       );
 
-      if (nextPage) {
-        console.log(
-          chalk.green(
-            `[INFO] Found "${text}" button (by text or aria-label). Loading more products...`,
-          ),
-        );
-      } else {
-        console.log(
-          chalk.red.bold(
-            `[STOP] NOT Found "${text}|${selectors.nextPage}" button (by text or aria-label). Stopping scraper.`,
-          ),
-        );
-      }
-
+      logNextPageResult(nextPage, text, selectors);
       return !!nextPage;
     } catch (e) {
       console.error(
@@ -331,9 +284,6 @@ class BaseScraper {
             await new Promise((resolve) => setTimeout(resolve, 400));
           }
 
-          let title =
-            product.querySelector(selectors.title)?.innerText?.trim() || null;
-
           let image =
             product.querySelector(selectors.image)?.getAttribute("src") || null;
           if (image && !isValidHttpUrl(image)) {
@@ -346,35 +296,30 @@ class BaseScraper {
             link = `${baseUrl}${link}`;
           }
 
+          function getInnerText(selector) {
+            if (selector) {
+              const elementFound = product.querySelector(selector);
+              return elementFound?.innerText.trim() || null;
+            }
+            return null;
+          }
+
           // Also, we have the `discountPercentage` and `discountPrice`;
           // this means a store can display both or just one of them,
           // so if we have both is nice, but if not,
           // we should calculate the other one based on the final price,
           // this is the same to `specialDiscountPrice` and `specialDiscountPercentage`.
           const productData = {
-            title,
             image,
             link,
-            finalPrice:
-              product.querySelector(selectors.price)?.innerText.trim() || null,
-            discountPercentage: selectors.discountPercentage
-              ? product
-                  .querySelector(selectors.discountPercentage)
-                  ?.innerText.trim()
-              : null,
-            discountPrice: selectors.discountPrice
-              ? product.querySelector(selectors.discountPrice)?.innerText.trim()
-              : null,
-            specialDiscountPrice: selectors.specialDiscountPrice
-              ? product
-                  .querySelector(selectors.specialDiscountPrice)
-                  ?.innerText.trim()
-              : null,
-            specialDiscountPercentage: selectors.specialDiscountPercentage
-              ? product
-                  .querySelector(selectors.specialDiscountPercentage)
-                  ?.innerText.trim()
-              : null,
+            title: getInnerText(selectors.title),
+            finalPrice: getInnerText(selectors.price),
+            discountPercentage: getInnerText(selectors.discountPercentage),
+            discountPrice: getInnerText(selectors.discountPrice),
+            specialDiscountPrice: getInnerText(selectors.specialDiscountPrice),
+            specialDiscountPercentage: getInnerText(
+              selectors.specialDiscountPercentage,
+            ),
           };
 
           products.push(await window.productNormalizer(productData));
