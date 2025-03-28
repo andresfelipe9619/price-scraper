@@ -4,7 +4,7 @@ const { join } = require("path");
 class AmazonScraper extends BaseScraper {
   constructor(browser) {
     const config = {
-      maxPages: 20,
+      maxPages: 10,
       baseUrl: "https://co.tiendasishop.com",
       outputDir: join(__dirname, "../../extracted-data/ishop"),
       categories: {

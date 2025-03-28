@@ -4,7 +4,7 @@ const { join } = require("path");
 class ExitoScraper extends BaseScraper {
   constructor(browser) {
     const config = {
-      maxPages: 3,
+      maxPages: 10,
       baseUrl: "https://www.exito.com",
       outputDir: join(__dirname, "../../extracted-data/exito"),
       categories: {

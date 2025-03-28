@@ -4,7 +4,7 @@ const { join } = require("path");
 class MacCenterScraper extends BaseScraper {
   constructor(browser) {
     const config = {
-      maxPages: 4,
+      maxPages: 10,
       baseUrl: "https://mac-center.com",
       outputDir: join(__dirname, "../../extracted-data/mac-center"),
       categories: {

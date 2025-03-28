@@ -4,7 +4,7 @@ const { join } = require("path");
 class JumboScraper extends BaseScraper {
   constructor(browser) {
     const config = {
-      maxPages: 20,
+      maxPages: 10,
       baseUrl: "https://www.jumbocolombia.com",
       outputDir: join(__dirname, "../../extracted-data/jumbo"),
       categories: {

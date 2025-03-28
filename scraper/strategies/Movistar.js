@@ -4,7 +4,7 @@ const { join } = require("path");
 class MovistarScraper extends BaseScraper {
   constructor(browser) {
     const config = {
-      maxPages: 20,
+      maxPages: 10,
       baseUrl: "https://tienda.movistar.com.co",
       outputDir: join(__dirname, "../../extracted-data/movistar"),
       categories: {

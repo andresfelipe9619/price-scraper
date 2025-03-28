@@ -4,7 +4,7 @@ const { join } = require("path");
 class FalabellaScraper extends BaseScraper {
   constructor(browser) {
     const config = {
-      maxPages: 20,
+      maxPages: 10,
       baseUrl: "https://www.falabella.com.co",
       outputDir: join(__dirname, "../../extracted-data/falabella"),
       categories: {

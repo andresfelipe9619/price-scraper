@@ -4,7 +4,7 @@ const { join } = require("path");
 class TigoScraper extends BaseScraper {
   constructor(browser) {
     const config = {
-      maxPages: 2,
+      maxPages: 10,
       baseUrl: "https://compras.tigo.com.co",
       outputDir: join(__dirname, "../../extracted-data/tigo"),
       categories: {
