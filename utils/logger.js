@@ -62,25 +62,35 @@ function logNextPageResult(nextPage, text, selectors) {
   }
 }
 
-// Function to get a log file stream per strategy
+// Store open file streams
+const logStreams = new Map();
+
 function getLogStream(strategy) {
   const logsDir = path.join(__dirname, "logs");
-  if (!fs.existsSync(logsDir)) fs.mkdirSync(logsDir); // Ensure logs folder exists
+  if (!fs.existsSync(logsDir)) fs.mkdirSync(logsDir);
 
-  const logFilePath = path.join(logsDir, `${strategy}.log`);
-  return fs.createWriteStream(logFilePath, { flags: "a" }); // Append mode
+  if (!logStreams.has(strategy)) {
+    const logFilePath = path.join(logsDir, `${strategy}.log`);
+    const stream = fs.createWriteStream(logFilePath, { flags: "a" });
+    logStreams.set(strategy, stream);
+  }
+  return logStreams.get(strategy);
 }
 
-// Function to log to both console and file
 function logToFile(strategy, message) {
   const logStream = getLogStream(strategy);
   console.log(message);
   // eslint-disable-next-line no-control-regex
-  logStream.write(message.replace(/\x1B\[[0-9;]*[mK]/g, "") + "\n"); // Remove chalk color codes before writing
-  logStream.end(); // Close stream after writing
+  logStream.write(message.replace(/\x1B\[[0-9;]*[mK]/g, "") + "\n"); // Remove ANSI color codes
 }
 
-// Logs performance metrics (CPU & RAM)
+// Gracefully close log streams when process exits
+process.on("exit", () => {
+  for (const stream of logStreams.values()) {
+    stream.end();
+  }
+});
+
 async function logPerformanceMetrics(strategy) {
   const usage = await pidusage(process.pid);
   logToFile(strategy, chalk.yellow(`📊 Resource usage:`));
@@ -91,7 +101,6 @@ async function logPerformanceMetrics(strategy) {
   );
 }
 
-// Logs execution time
 function logExecutionTime(strategy, startTime) {
   const endTime = performance.now();
   const executionTime = (endTime - startTime) / 1000;
