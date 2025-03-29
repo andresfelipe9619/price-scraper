@@ -55,10 +55,13 @@ async function main() {
 
   console.log(`🚀 Running ${scrapersToRun.length} scraper(s)...`);
 
-  await Promise.allSettled(scraperGroups[0].map(runScraper)); // DEMO group
-  await Promise.allSettled(scraperGroups[1].map(runScraper)); // Second group
-  await Promise.allSettled(scraperGroups[2].map(runScraper)); // Third group
-  await Promise.allSettled(scraperGroups[3].map(runScraper)); // TO FIX group
+  for (const group of scraperGroups) {
+    await Promise.allSettled(
+      group
+        .filter((scraper) => scrapersToRun.includes(scraper))
+        .map(runScraper),
+    );
+  }
 
   console.log("🏁 All selected scrapers finished!");
 }

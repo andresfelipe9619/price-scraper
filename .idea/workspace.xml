@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a28c6bbe-d509-42f0-8751-a0e95bf78c10" name="Changes" comment="✨ Create log files based on the strategy">
+    <list default="true" id="a28c6bbe-d509-42f0-8751-a0e95bf78c10" name="Changes" comment="✨ Create CLI, this is looking fucking awesome">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/__tests__/scraper.js" beforeDir="false" afterPath="$PROJECT_DIR$/__tests__/scraper.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -208,23 +208,7 @@
       <workItem from="1743165953691" duration="1489000" />
       <workItem from="1743191437603" duration="392000" />
       <workItem from="1743212214514" duration="5155000" />
-      <workItem from="1743249413477" duration="7376000" />
-    </task>
-    <task id="LOCAL-00024" summary="✨ Create Falabella scraper">
-      <option name="closed" value="true" />
-      <created>1740839844500</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1740839844500</updated>
-    </task>
-    <task id="LOCAL-00025" summary="🔥 Remove unused code">
-      <option name="closed" value="true" />
-      <created>1740841138063</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1740841138063</updated>
+      <workItem from="1743249413477" duration="11634000" />
     </task>
     <task id="LOCAL-00026" summary="✨ Add iShop scraper">
       <option name="closed" value="true" />
@@ -602,7 +586,23 @@
       <option name="project" value="LOCAL" />
       <updated>1743256101051</updated>
     </task>
-    <option name="localTasksCounter" value="73" />
+    <task id="LOCAL-00073" summary="⚡️ Use Promise.allSettled">
+      <option name="closed" value="true" />
+      <created>1743260528938</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1743260528938</updated>
+    </task>
+    <task id="LOCAL-00074" summary="✨ Create CLI, this is looking fucking awesome">
+      <option name="closed" value="true" />
+      <created>1743262434542</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1743262434542</updated>
+    </task>
+    <option name="localTasksCounter" value="75" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -620,8 +620,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="✨ Create Mercado Libre scraper" />
-    <MESSAGE value=" Update code" />
     <MESSAGE value=" Improve logs" />
     <MESSAGE value="♻️ Refactor normalizing functions for better maintainability" />
     <MESSAGE value="♻️ Refactor naming of variables and also improve code readability" />
@@ -645,7 +643,9 @@
     <MESSAGE value=" Show CPU and RAM info" />
     <MESSAGE value=" Improve code" />
     <MESSAGE value="✨ Create log files based on the strategy" />
-    <option name="LAST_COMMIT_MESSAGE" value="✨ Create log files based on the strategy" />
+    <MESSAGE value="⚡️ Use Promise.allSettled" />
+    <MESSAGE value="✨ Create CLI, this is looking fucking awesome" />
+    <option name="LAST_COMMIT_MESSAGE" value="✨ Create CLI, this is looking fucking awesome" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
