@@ -35,6 +35,7 @@
     "ml-kmeans": "^6.0.0",
     "mysql2": "^3.12.0",
     "natural": "^8.0.1",
+    "pidusage": "^4.0.0",
     "puppeteer": "^24.3.0"
   },
   "devDependencies": {

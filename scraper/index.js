@@ -1,5 +1,6 @@
 const chalk = require("chalk");
 const { performance } = require("perf_hooks");
+const pidusage = require("pidusage"); // Import pidusage
 const Browser = require("./browser");
 const Scrapers = require("./strategies");
 
@@ -10,6 +11,7 @@ async function init(strategy) {
   );
 
   const startTime = performance.now(); // Start timing
+  const startUsage = await pidusage(process.pid); // Get initial resource usage
 
   try {
     browser = await Browser.startBrowser();
@@ -32,10 +34,17 @@ async function init(strategy) {
     }
 
     const endTime = performance.now(); // End timing
+    const endUsage = await pidusage(process.pid); // Get final resource usage
+
     console.log(
       chalk.blue(
         `⏱ Total execution time: ${((endTime - startTime) / 1000).toFixed(2)} seconds`,
       ),
+    );
+    console.log(chalk.yellow(`📊 Resource usage:`));
+    console.log(chalk.cyan(`   🖥 CPU: ${endUsage.cpu.toFixed(2)}%`));
+    console.log(
+      chalk.cyan(`   🏗 RAM: ${(endUsage.memory / 1024 / 1024).toFixed(2)} MB`),
     );
 
     console.log(chalk.gray("📌 Process finished."));
