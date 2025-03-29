@@ -33,8 +33,8 @@ async function init(strategy) {
       console.log(chalk.yellow("🔒 Browser closed."));
     }
 
-    await logPerformanceMetrics();
-    logExecutionTime(startTime);
+    logExecutionTime(strategy, startTime);
+    await logPerformanceMetrics(strategy);
     console.log(chalk.gray("🏁 Process finished."));
   }
 }

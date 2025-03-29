@@ -1,5 +1,7 @@
 const chalk = require("chalk");
 const pidusage = require("pidusage");
+const path = require("path");
+const fs = require("fs");
 
 function logProductData({
   title,
@@ -60,19 +62,41 @@ function logNextPageResult(nextPage, text, selectors) {
   }
 }
 
-async function logPerformanceMetrics() {
+// Function to get a log file stream per strategy
+function getLogStream(strategy) {
+  const logsDir = path.join(__dirname, "logs");
+  if (!fs.existsSync(logsDir)) fs.mkdirSync(logsDir); // Ensure logs folder exists
+
+  const logFilePath = path.join(logsDir, `${strategy}.log`);
+  return fs.createWriteStream(logFilePath, { flags: "a" }); // Append mode
+}
+
+// Function to log to both console and file
+function logToFile(strategy, message) {
+  const logStream = getLogStream(strategy);
+  console.log(message);
+  // eslint-disable-next-line no-control-regex
+  logStream.write(message.replace(/\x1B\[[0-9;]*[mK]/g, "") + "\n"); // Remove chalk color codes before writing
+  logStream.end(); // Close stream after writing
+}
+
+// Logs performance metrics (CPU & RAM)
+async function logPerformanceMetrics(strategy) {
   const usage = await pidusage(process.pid);
-  console.log(chalk.yellow(`📊 Resource usage:`));
-  console.log(chalk.cyan(`   🖥 CPU: ${usage.cpu.toFixed(2)}%`));
-  console.log(
+  logToFile(strategy, chalk.yellow(`📊 Resource usage:`));
+  logToFile(strategy, chalk.cyan(`   🖥 CPU: ${usage.cpu.toFixed(2)}%`));
+  logToFile(
+    strategy,
     chalk.cyan(`   🏗 RAM: ${(usage.memory / 1024 / 1024).toFixed(2)} MB`),
   );
 }
 
-function logExecutionTime(startTime) {
+// Logs execution time
+function logExecutionTime(strategy, startTime) {
   const endTime = performance.now();
   const executionTime = (endTime - startTime) / 1000;
-  console.log(
+  logToFile(
+    strategy,
     chalk.green(`🕒 Execution time: ${executionTime.toFixed(2)} seconds`),
   );
 }
