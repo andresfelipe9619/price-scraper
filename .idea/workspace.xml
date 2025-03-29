@@ -4,23 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a28c6bbe-d509-42f0-8751-a0e95bf78c10" name="Changes" comment="🚚 Move API related folders to their own folder">
+    <list default="true" id="a28c6bbe-d509-42f0-8751-a0e95bf78c10" name="Changes" comment="✨ Create log files based on the strategy">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/__tests__/scraper.js" beforeDir="false" afterPath="$PROJECT_DIR$/__tests__/scraper.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prisma/migrations/20220716182408_init/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/20220716182408_init/migration.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prisma/migrations/20220720181615_added_historical_fields/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/20220720181615_added_historical_fields/migration.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prisma/migrations/20220723025413_added_images_schema/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/20220723025413_added_images_schema/migration.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prisma/migrations/migration_lock.toml" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/migration_lock.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/schema.prisma" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prisma/seed.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/seed.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/routes/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/routes/login.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/product.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/routes/product.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/routes/user.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scraper/strategies/Alkosto.js" beforeDir="false" afterPath="$PROJECT_DIR$/scraper/strategies/Alkosto.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/product.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/services/product.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,37 +59,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Jest.normalizePrice should convert string price to number.executor&quot;: &quot;Run&quot;,
-    &quot;Jest.normalizePriceAndDiscount should convert string discount to number.executor&quot;: &quot;Run&quot;,
-    &quot;Jest.utils.js.executor&quot;: &quot;Run&quot;,
-    &quot;Node.js.Exito.js.executor&quot;: &quot;Run&quot;,
-    &quot;Node.js.Merger.executor&quot;: &quot;Run&quot;,
-    &quot;Node.js.index.js.executor&quot;: &quot;Run&quot;,
-    &quot;Node.js.scraper.js.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;com.github.patou.gitmoji.display-icon&quot;: &quot;emoji&quot;,
-    &quot;com.github.patou.gitmoji.text-after-unicode&quot;: &quot; &quot;,
-    &quot;com.github.patou.gitmoji.use-unicode&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/suarezdev96/Desktop/Scraper/price-scraper&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs.jest.jest_package&quot;: &quot;/Users/suarezdev96/Desktop/Scraper/price-scraper/node_modules/jest&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
-    &quot;npm.demo.executor&quot;: &quot;Run&quot;,
-    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/suarezdev96/Desktop/Scraper/price-scraper/node_modules/prettier&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Users/suarezdev96/Applications/WebStorm.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Jest.normalizePrice should convert string price to number.executor": "Run",
+    "Jest.normalizePriceAndDiscount should convert string discount to number.executor": "Run",
+    "Jest.utils.js.executor": "Run",
+    "Node.js.Exito.js.executor": "Run",
+    "Node.js.Merger.executor": "Run",
+    "Node.js.index.js.executor": "Run",
+    "Node.js.scraper.js.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.github.patou.gitmoji.display-icon": "emoji",
+    "com.github.patou.gitmoji.text-after-unicode": " ",
+    "com.github.patou.gitmoji.use-unicode": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/Users/suarezdev96/Desktop/Scraper/price-scraper",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs.jest.jest_package": "/Users/suarezdev96/Desktop/Scraper/price-scraper/node_modules/jest",
+    "nodejs_package_manager_path": "yarn",
+    "npm.demo.executor": "Run",
+    "prettierjs.PrettierConfiguration.Package": "/Users/suarezdev96/Desktop/Scraper/price-scraper/node_modules/prettier",
+    "settings.editor.selected.configurable": "Errors",
+    "ts.external.directory.path": "/Users/suarezdev96/Applications/WebStorm.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/api" />
@@ -165,7 +151,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.25659.40" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.26053.12" />
       </set>
     </attachedChunks>
   </component>
@@ -213,63 +199,16 @@
       <workItem from="1742470110189" duration="19133000" />
       <workItem from="1742499462722" duration="5714000" />
       <workItem from="1742525069860" duration="2661000" />
-      <workItem from="1742557155950" duration="9714000" />
-    </task>
-    <task id="LOCAL-00017" summary="🔇 Remove extra logs">
-      <option name="closed" value="true" />
-      <created>1740801197357</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1740801197357</updated>
-    </task>
-    <task id="LOCAL-00018" summary="♻️ Create a new BaseScraper interface for better organization and scalability">
-      <option name="closed" value="true" />
-      <created>1740801263557</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1740801263557</updated>
-    </task>
-    <task id="LOCAL-00019" summary="🎨 Improve the structure of code, better documentation and maintainability">
-      <option name="closed" value="true" />
-      <created>1740834664101</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1740834664101</updated>
-    </task>
-    <task id="LOCAL-00020" summary="✅ Add Jest and create some tests">
-      <option name="closed" value="true" />
-      <created>1740835892291</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1740835892291</updated>
-    </task>
-    <task id="LOCAL-00021" summary="🎨 Improve documentation and code">
-      <option name="closed" value="true" />
-      <created>1740835919505</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1740835919505</updated>
-    </task>
-    <task id="LOCAL-00022" summary="📝 Add more documentation">
-      <option name="closed" value="true" />
-      <created>1740836195667</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1740836195667</updated>
-    </task>
-    <task id="LOCAL-00023" summary="📝 Fix params">
-      <option name="closed" value="true" />
-      <created>1740836266588</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1740836266588</updated>
+      <workItem from="1742557155950" duration="11044000" />
+      <workItem from="1742647972372" duration="6813000" />
+      <workItem from="1742698291095" duration="866000" />
+      <workItem from="1742732542696" duration="2985000" />
+      <workItem from="1742783952416" duration="804000" />
+      <workItem from="1742820201771" duration="2852000" />
+      <workItem from="1743165953691" duration="1489000" />
+      <workItem from="1743191437603" duration="392000" />
+      <workItem from="1743212214514" duration="5155000" />
+      <workItem from="1743249413477" duration="7376000" />
     </task>
     <task id="LOCAL-00024" summary="✨ Create Falabella scraper">
       <option name="closed" value="true" />
@@ -607,7 +546,63 @@
       <option name="project" value="LOCAL" />
       <updated>1742567383046</updated>
     </task>
-    <option name="localTasksCounter" value="66" />
+    <task id="LOCAL-00066" summary="🚚 Move API related folders to their own folder">
+      <option name="closed" value="true" />
+      <created>1742570148777</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1742570148777</updated>
+    </task>
+    <task id="LOCAL-00067" summary="♻️ Create Logger file for centralizing somo complex logs">
+      <option name="closed" value="true" />
+      <created>1742698517681</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1742698517681</updated>
+    </task>
+    <task id="LOCAL-00068" summary="🔧 Set default max pages to 10">
+      <option name="closed" value="true" />
+      <created>1743168456901</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1743168456901</updated>
+    </task>
+    <task id="LOCAL-00069" summary="🔊 Improve logs and show performance info">
+      <option name="closed" value="true" />
+      <created>1743219971736</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1743219971736</updated>
+    </task>
+    <task id="LOCAL-00070" summary="🔊 Show CPU and RAM info">
+      <option name="closed" value="true" />
+      <created>1743221849745</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1743221849745</updated>
+    </task>
+    <task id="LOCAL-00071" summary="🎨 Improve code">
+      <option name="closed" value="true" />
+      <created>1743254202626</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1743254202626</updated>
+    </task>
+    <task id="LOCAL-00072" summary="✨ Create log files based on the strategy">
+      <option name="closed" value="true" />
+      <created>1743256101051</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1743256101051</updated>
+    </task>
+    <option name="localTasksCounter" value="73" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -625,12 +620,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value=" Create the full list of desirable scrapers" />
-    <MESSAGE value="✨ Create DEMO_MODE for showing logs slowly, perfect for demos and videos" />
-    <MESSAGE value=" Fix minor issues" />
-    <MESSAGE value=" Improve structure of code" />
-    <MESSAGE value=" Use just one env var" />
-    <MESSAGE value=" Improve logs" />
     <MESSAGE value="✨ Create Mercado Libre scraper" />
     <MESSAGE value=" Update code" />
     <MESSAGE value=" Improve logs" />
@@ -650,7 +639,13 @@
     <MESSAGE value=" Add .idea folder for better project workspace consistency" />
     <MESSAGE value=" Add documentation" />
     <MESSAGE value=" Move API related folders to their own folder" />
-    <option name="LAST_COMMIT_MESSAGE" value=" Move API related folders to their own folder" />
+    <MESSAGE value="♻️ Create Logger file for centralizing somo complex logs" />
+    <MESSAGE value=" Set default max pages to 10" />
+    <MESSAGE value=" Improve logs and show performance info" />
+    <MESSAGE value=" Show CPU and RAM info" />
+    <MESSAGE value=" Improve code" />
+    <MESSAGE value="✨ Create log files based on the strategy" />
+    <option name="LAST_COMMIT_MESSAGE" value="✨ Create log files based on the strategy" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
