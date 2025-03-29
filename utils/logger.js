@@ -1,4 +1,5 @@
 const chalk = require("chalk");
+const pidusage = require("pidusage");
 
 function logProductData({
   title,
@@ -59,8 +60,27 @@ function logNextPageResult(nextPage, text, selectors) {
   }
 }
 
+async function logPerformanceMetrics() {
+  const usage = await pidusage(process.pid);
+  console.log(chalk.yellow(`📊 Resource usage:`));
+  console.log(chalk.cyan(`   🖥 CPU: ${usage.cpu.toFixed(2)}%`));
+  console.log(
+    chalk.cyan(`   🏗 RAM: ${(usage.memory / 1024 / 1024).toFixed(2)} MB`),
+  );
+}
+
+function logExecutionTime(startTime) {
+  const endTime = performance.now();
+  const executionTime = (endTime - startTime) / 1000;
+  console.log(
+    chalk.green(`🕒 Execution time: ${executionTime.toFixed(2)} seconds`),
+  );
+}
+
 module.exports = {
   logProductData,
+  logExecutionTime,
+  logPerformanceMetrics,
   logErrorLoadingPageProducts,
   logNextPageResult,
 };

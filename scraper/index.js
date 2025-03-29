@@ -1,8 +1,8 @@
 const chalk = require("chalk");
 const { performance } = require("perf_hooks");
-const pidusage = require("pidusage"); // Import pidusage
 const Browser = require("./browser");
 const Scrapers = require("./strategies");
+const { logPerformanceMetrics, logExecutionTime } = require("../utils/logger");
 
 async function init(strategy) {
   let browser = null;
@@ -11,16 +11,16 @@ async function init(strategy) {
   );
 
   const startTime = performance.now(); // Start timing
-  const startUsage = await pidusage(process.pid); // Get initial resource usage
+  await logPerformanceMetrics();
 
   try {
     browser = await Browser.startBrowser();
-    console.log(chalk.cyan("🖥  Browser initialized successfully."));
+    console.log(chalk.cyan("🌐  Browser initialized successfully."));
 
     const scraperStrategy = Scrapers.get(strategy);
     const Scraper = new scraperStrategy(browser);
 
-    console.log(chalk.magenta("🔍 Executing scraping strategy..."));
+    console.log(chalk.magenta("🕵️‍♂️ Executing scraping strategy..."));
     await Scraper.exec();
 
     console.log(chalk.green("✅ Scraping completed successfully!"));
@@ -33,21 +33,9 @@ async function init(strategy) {
       console.log(chalk.yellow("🔒 Browser closed."));
     }
 
-    const endTime = performance.now(); // End timing
-    const endUsage = await pidusage(process.pid); // Get final resource usage
-
-    console.log(
-      chalk.blue(
-        `⏱ Total execution time: ${((endTime - startTime) / 1000).toFixed(2)} seconds`,
-      ),
-    );
-    console.log(chalk.yellow(`📊 Resource usage:`));
-    console.log(chalk.cyan(`   🖥 CPU: ${endUsage.cpu.toFixed(2)}%`));
-    console.log(
-      chalk.cyan(`   🏗 RAM: ${(endUsage.memory / 1024 / 1024).toFixed(2)} MB`),
-    );
-
-    console.log(chalk.gray("📌 Process finished."));
+    await logPerformanceMetrics();
+    logExecutionTime(startTime);
+    console.log(chalk.gray("🏁 Process finished."));
   }
 }
 
